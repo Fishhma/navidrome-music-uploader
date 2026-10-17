@@ -7,7 +7,7 @@ Standalone Django web app for authenticated uploads into an **existing** Navidro
 - Separate Django accounts, password hashing, CSRF-protected login/logout, and per-user upload history.
 - Django Admin user enable/disable, global upload policy, optional per-user rolling 24-hour quota, and full upload history.
 - Multi-file selection, drag-and-drop, transfer progress, and result messages.
-- Content-signature checks for MP3, FLAC, WAV, OGG/Opus, M4A/M4B, AAC, AIFF, and WMA. ZIP is supported; **RAR is intentionally not supported**.
+- Content-signature checks for MP3, FLAC, WAV, OGG/Opus, M4A/M4B, AAC, AIFF, and WMA. ZIP is supported; **RAR is currently not supported**.
 - ZIP traversal, symlink, encryption, entry-count, expanded-size, compression-ratio, audio-format, duplicate, file-size, and quota checks.
 - Private SQLite and incoming-upload volumes; validated tracks are atomically renamed into `/music/Uploads/`. The application does not chown or loosen permissions on the shared library.
 
