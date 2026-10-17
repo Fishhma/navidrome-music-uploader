@@ -2,6 +2,7 @@ import io
 import tempfile
 import zipfile
 from pathlib import Path
+from unittest.mock import patch
 
 from django.contrib.auth.models import User
 from django.conf import settings
@@ -91,6 +92,13 @@ class UploadFlowTests(TestCase):
         self.assertTrue((self.library / "Uploads" / record.stored_name).is_file())
         self.assertEqual(list((self.library / "Uploads").glob("*.txt")), [])
 
+    @patch("uploads.views.process_rar", return_value=1)
+    def test_rar_extension_is_accepted_and_dispatched_to_rar_processor(self, process_rar_mock):
+        response = self.post_files(self.user, SimpleUploadedFile("album.rar", b"RAR test fixture"))
+        self.assertEqual(response.status_code, 200)
+        process_rar_mock.assert_called_once()
+        self.assertEqual(response.json()["results"][0]["status"], "success")
+
     def test_rejects_traversal_zip_without_writing_files(self):
         contents = io.BytesIO()
         with zipfile.ZipFile(contents, "w") as archive:
@@ -157,6 +165,16 @@ class LoginAndRouteTests(TestCase):
         )
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "Пожалуйста, введите правильные имя пользователя и пароль")
+
+    def test_browser_language_is_detected(self):
+        response = self.client.get("/accounts/login/", HTTP_ACCEPT_LANGUAGE="cs,en;q=0.8")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.headers.get("Content-Language"), "cs")
+
+    def test_language_selection_is_persisted_in_cookie(self):
+        response = self.client.post("/i18n/setlang/", {"language": "en", "next": "/accounts/login/"})
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.cookies["django_language"].value, "en")
 
     def test_upload_requires_authentication(self):
         response = self.client.post("/upload/")

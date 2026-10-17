@@ -1,0 +1,206 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: ru\n"
+
+msgid "Music library"
+msgstr "Музыкальная библиотека"
+
+msgid "Language"
+msgstr "Язык"
+
+msgid "Administration"
+msgstr "Администрирование"
+
+msgid "Log out"
+msgstr "Выйти"
+
+msgid "Private uploads to your shared music library"
+msgstr "Личная загрузка в вашу общую музыкальную библиотеку"
+
+msgid "Sign in"
+msgstr "Войти"
+
+msgid "YOUR MUSIC LIBRARY"
+msgstr "ВАША МУЗЫКАЛЬНАЯ БИБЛИОТЕКА"
+
+msgid "Welcome back"
+msgstr "С возвращением"
+
+msgid "Sign in to upload music securely."
+msgstr "Войдите, чтобы безопасно загрузить музыку."
+
+msgid "Username"
+msgstr "Имя пользователя"
+
+msgid "Password"
+msgstr "Пароль"
+
+msgid "Upload music"
+msgstr "Загрузить музыку"
+
+msgid "SHARED LIBRARY"
+msgstr "ОБЩАЯ БИБЛИОТЕКА"
+
+msgid "Files will appear in the shared Navidrome library after indexing."
+msgstr "Файлы появятся в общей библиотеке Navidrome после индексации."
+
+msgid "Used in the last 24 hours"
+msgstr "Использовано за 24 часа"
+
+msgid "Drop files here"
+msgstr "Перетащите файлы сюда"
+
+msgid "or click to choose files"
+msgstr "или нажмите, чтобы выбрать файлы"
+
+msgid "Up to %(max_size)s per file · up to %(max_files)s files at a time"
+msgstr "До %(max_size)s на файл · до %(max_files)s файлов за раз"
+
+msgid "Upload files"
+msgstr "Загрузить файлы"
+
+msgid "Preparing…"
+msgstr "Подготовка…"
+
+msgid "PERSONAL ACTIVITY"
+msgstr "ЛИЧНАЯ АКТИВНОСТЬ"
+
+msgid "Recent uploads"
+msgstr "Последние загрузки"
+
+msgid "Only you can see this history"
+msgstr "История видна только вам"
+
+msgid "Done"
+msgstr "Готово"
+
+msgid "Failed"
+msgstr "Ошибка"
+
+msgid "No uploads yet"
+msgstr "Загрузок пока нет"
+
+msgid "Selected files and their processing status will appear here."
+msgstr "Выбранные файлы появятся здесь со статусом обработки."
+
+msgid "Uploading files…"
+msgstr "Загрузка файлов…"
+
+msgid "Transferring files:"
+msgstr "Передача файлов:"
+
+msgid "Upload error."
+msgstr "Ошибка загрузки."
+
+msgid "Could not process the server response."
+msgstr "Не удалось обработать ответ сервера."
+
+msgid "Network error. Check your connection and refresh the page."
+msgstr "Ошибка сети. Проверьте подключение и обновите страницу."
+
+msgid "Upload cancelled."
+msgstr "Загрузка отменена."
+
+msgid "Unsupported file type. ZIP or a supported audio format is required."
+msgstr "Неподдерживаемый тип файла. Требуется ZIP, RAR или поддерживаемый аудиоформат."
+
+msgid "The file contents do not match a supported audio format."
+msgstr "Содержимое файла не соответствует поддерживаемому аудиоформату."
+
+msgid "The ZIP archive is invalid."
+msgstr "Архив ZIP повреждён или имеет неверный формат."
+
+msgid "The ZIP archive contains too many entries."
+msgstr "В архиве ZIP слишком много элементов."
+
+msgid "The ZIP archive contains an unsafe path or link."
+msgstr "Архив ZIP содержит небезопасный путь или ссылку."
+
+msgid "The ZIP archive expands beyond the configured size limit."
+msgstr "Распакованный архив ZIP превышает допустимый размер."
+
+msgid "The ZIP archive exceeds the configured compression ratio."
+msgstr "Коэффициент сжатия архива ZIP превышает допустимый предел."
+
+msgid "Encrypted ZIP archives are not supported."
+msgstr "Зашифрованные ZIP-архивы не поддерживаются."
+
+msgid "The ZIP archive contains no supported audio files."
+msgstr "В архиве ZIP нет поддерживаемых аудиофайлов."
+
+msgid "The RAR archive contains too many entries."
+msgstr "В архиве RAR слишком много элементов."
+
+msgid "The RAR archive contains an unsafe path or link."
+msgstr "Архив RAR содержит небезопасный путь или ссылку."
+
+msgid "The RAR archive expands beyond the configured size limit."
+msgstr "Распакованный архив RAR превышает допустимый размер."
+
+msgid "The RAR archive exceeds the configured compression ratio."
+msgstr "Коэффициент сжатия архива RAR превышает допустимый предел."
+
+msgid "Password-protected RAR archives are not supported."
+msgstr "RAR-архивы, защищённые паролем, не поддерживаются."
+
+msgid "The RAR archive contains no supported audio files."
+msgstr "В архиве RAR нет поддерживаемых аудиофайлов."
+
+msgid "The RAR archive is invalid or cannot be read."
+msgstr "Архив RAR повреждён или не может быть прочитан."
+
+msgid "Added to the shared music library."
+msgstr "Добавлено в общую музыкальную библиотеку."
+
+msgid "This audio file has already been uploaded."
+msgstr "Этот аудиофайл уже загружен."
+
+msgid "The file exceeds the configured per-file size limit."
+msgstr "Файл превышает установленный лимит размера."
+
+msgid "The user's rolling 24-hour upload quota would be exceeded."
+msgstr "Будет превышен лимит загрузки пользователя за последние 24 часа."
+
+msgid "Extracted from ZIP and added to the shared music library."
+msgstr "Извлечено из ZIP и добавлено в общую музыкальную библиотеку."
+
+msgid "Extracted from RAR and added to the shared music library."
+msgstr "Извлечено из RAR и добавлено в общую музыкальную библиотеку."
+
+msgid "The ZIP archive contains an unreadable audio file."
+msgstr "Архив ZIP содержит нечитаемый аудиофайл."
+
+msgid "The RAR archive contains an unreadable audio file."
+msgstr "Архив RAR содержит нечитаемый аудиофайл."
+
+msgid "Select at least one file."
+msgstr "Выберите хотя бы один файл."
+
+msgid "At most %(max_files)s files can be uploaded in one request."
+msgstr "За один раз можно загрузить не более %(max_files)s файлов."
+
+msgid "The total upload request exceeds the server limit."
+msgstr "Общий размер загрузки превышает серверный лимит."
+
+msgid "Server storage is unavailable."
+msgstr "Хранилище сервера недоступно."
+
+msgid "The server could not process this file."
+msgstr "Сервер не смог обработать этот файл."
+
+msgid "Added %(count)s audio file(s) from the ZIP archive."
+msgstr "Добавлено аудиофайлов из ZIP-архива: %(count)s."
+
+msgid "Added %(count)s audio file(s) from the RAR archive."
+msgstr "Добавлено аудиофайлов из RAR-архива: %(count)s."
+
+msgid "Unsupported file type. ZIP, RAR, or a supported audio format is required."
+msgstr "Неподдерживаемый тип файла. Требуется ZIP, RAR или поддерживаемый аудиоформат."
+
+msgid "%(name)s: file exceeds the configured per-file size limit."
+msgstr "%(name)s: файл превышает установленный лимит размера."
+
+msgid "%(name)s: this audio file has already been uploaded."
+msgstr "%(name)s: этот аудиофайл уже загружен."

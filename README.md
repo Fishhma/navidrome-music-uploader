@@ -7,8 +7,8 @@ Standalone Django web app for authenticated uploads into an **existing** Navidro
 - Separate Django accounts, password hashing, CSRF-protected login/logout, and per-user upload history.
 - Django Admin user enable/disable, global upload policy, optional per-user rolling 24-hour quota, and full upload history.
 - Multi-file selection, drag-and-drop, transfer progress, and result messages.
-- Content-signature checks for MP3, FLAC, WAV, OGG/Opus, M4A/M4B, AAC, AIFF, and WMA. ZIP is supported; **RAR is currently not supported**.
-- ZIP traversal, symlink, encryption, entry-count, expanded-size, compression-ratio, audio-format, duplicate, file-size, and quota checks.
+- Content-signature checks for MP3, FLAC, WAV, OGG/Opus, M4A/M4B, AAC, AIFF, and WMA. ZIP and RAR archives are supported, using Python ZIP handling and the `unar` backend for RAR.
+- ZIP/RAR traversal, link, encryption/password, entry-count, expanded-size, compression-ratio, audio-format, duplicate, file-size, and quota checks.
 - Private SQLite and incoming-upload volumes; validated tracks are atomically renamed into `/music/Uploads/`. The application does not chown or loosen permissions on the shared library.
 
 ## Prepare the existing server
@@ -41,7 +41,7 @@ If this UID/GID does not already have the required directory write permission, c
    docker compose -f docker-compose.yml exec music-uploader python manage.py createsuperuser
    ```
 
-5. Open `http://192.168.0.110:4580/`, then visit `/admin/` to add individual users and tune the upload policy.
+5. Open `http://192.168.x.x:4580/`, then visit `/admin/` to add individual users and tune the upload policy.
 
 For HTTPS behind a trusted TLS-terminating reverse proxy, configure the proxy separately, set `DJANGO_SECURE_COOKIES=1`, set `DJANGO_CSRF_TRUSTED_ORIGINS` to the exact `https://` origin, and configure the correct allowed host. Do not expose this service directly to the public internet. Compose uses persistent named volumes `uploader_data` and `uploader_incoming`; back them up along with `.env`. The media files themselves remain in the existing Navidrome library.
 
@@ -49,9 +49,9 @@ Navidrome sees new tracks under its existing mounted library at its next library
 
 ## Limits and operational notes
 
-- Defaults: 100 MiB per upload (and expanded archive), 20 selected files per request, 1 GiB per user in a rolling 24 hours, 100 ZIP entries, 1 GiB ZIP expanded size, and maximum 100:1 expansion ratio. Administrators may change policy values in Django Admin. Per-user quota overrides are managed under **User upload limits**.
+- Defaults: 100 MiB per upload (and expanded archive), 20 selected files per request, 1 GiB per user in a rolling 24 hours, 100 archive entries, 1 GiB archive expanded size, and maximum 100:1 expansion ratio. Administrators may change policy values in Django Admin. Per-user quota overrides are managed under **User upload limits**.
 - Files are written under `Uploads/` with a sanitized basename, content hash, and random suffix. Exact-content duplicate detection is global across successful upload history.
-- Archive extraction accepts only regular, supported audio members and does not preserve archive paths. Unsafe paths/links or unreadable/invalid audio reject the archive. Non-audio archive entries are ignored. RAR, nested archive extraction, transcoding, and audio metadata parsing are not supported.
+- Archive extraction accepts only regular, supported audio members and does not preserve archive paths. Unsafe paths/links or unreadable/invalid audio reject the archive. Non-audio archive entries are ignored. Nested archive extraction, transcoding, and audio metadata parsing are not supported. The interface supports Russian, Czech, and English; the browser language is selected automatically until the user changes it, and the selected language is remembered in a cookie.
 - Validation checks file signatures, not full codec integrity. The Navidrome scanner remains responsible for catalog indexing.
 - A user with Django staff privileges can access Django Admin; grant that role only to trusted administrators. User accounts are created by an admin; public self-registration is not provided.
 - The container has no root privileges, drops Linux capabilities, uses read-only root filesystem, and has memory/PID limits. Restrict access at the host firewall and reverse proxy as appropriate.

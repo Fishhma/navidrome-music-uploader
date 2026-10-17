@@ -1,3 +1,4 @@
 Django>=5.2,<5.3
 gunicorn>=23,<24
 whitenoise>=6.9,<7
+rarfile>=4.2,<6

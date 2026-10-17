@@ -1,0 +1,206 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: cs\n"
+
+msgid "Music library"
+msgstr "Hudební knihovna"
+
+msgid "Language"
+msgstr "Jazyk"
+
+msgid "Administration"
+msgstr "Administrace"
+
+msgid "Log out"
+msgstr "Odhlásit se"
+
+msgid "Private uploads to your shared music library"
+msgstr "Soukromé nahrávání do vaší sdílené hudební knihovny"
+
+msgid "Sign in"
+msgstr "Přihlásit se"
+
+msgid "YOUR MUSIC LIBRARY"
+msgstr "VAŠE HUDEBNÍ KNIHOVNA"
+
+msgid "Welcome back"
+msgstr "Vítejte zpět"
+
+msgid "Sign in to upload music securely."
+msgstr "Přihlaste se a bezpečně nahrajte hudbu."
+
+msgid "Username"
+msgstr "Uživatelské jméno"
+
+msgid "Password"
+msgstr "Heslo"
+
+msgid "Upload music"
+msgstr "Nahrát hudbu"
+
+msgid "SHARED LIBRARY"
+msgstr "SDÍLENÁ KNIHOVNA"
+
+msgid "Files will appear in the shared Navidrome library after indexing."
+msgstr "Soubory se po zaindexování objeví ve sdílené knihovně Navidrome."
+
+msgid "Used in the last 24 hours"
+msgstr "Využito za posledních 24 hodin"
+
+msgid "Drop files here"
+msgstr "Přetáhněte soubory sem"
+
+msgid "or click to choose files"
+msgstr "nebo kliknutím vyberte soubory"
+
+msgid "Up to %(max_size)s per file · up to %(max_files)s files at a time"
+msgstr "Max. %(max_size)s na soubor · max. %(max_files)s souborů najednou"
+
+msgid "Upload files"
+msgstr "Nahrát soubory"
+
+msgid "Preparing…"
+msgstr "Příprava…"
+
+msgid "PERSONAL ACTIVITY"
+msgstr "OSOBNÍ AKTIVITA"
+
+msgid "Recent uploads"
+msgstr "Poslední nahrané soubory"
+
+msgid "Only you can see this history"
+msgstr "Tuto historii vidíte pouze vy"
+
+msgid "Done"
+msgstr "Hotovo"
+
+msgid "Failed"
+msgstr "Chyba"
+
+msgid "No uploads yet"
+msgstr "Zatím žádná nahrávání"
+
+msgid "Selected files and their processing status will appear here."
+msgstr "Vybrané soubory a stav jejich zpracování se zobrazí zde."
+
+msgid "Uploading files…"
+msgstr "Nahrávání souborů…"
+
+msgid "Transferring files:"
+msgstr "Přenos souborů:"
+
+msgid "Upload error."
+msgstr "Chyba nahrávání."
+
+msgid "Could not process the server response."
+msgstr "Odpověď serveru se nepodařilo zpracovat."
+
+msgid "Network error. Check your connection and refresh the page."
+msgstr "Chyba sítě. Zkontrolujte připojení a obnovte stránku."
+
+msgid "Upload cancelled."
+msgstr "Nahrávání zrušeno."
+
+msgid "Unsupported file type. ZIP or a supported audio format is required."
+msgstr "Nepodporovaný typ souboru. Je vyžadován ZIP, RAR nebo podporovaný zvukový formát."
+
+msgid "The file contents do not match a supported audio format."
+msgstr "Obsah souboru neodpovídá podporovanému zvukovému formátu."
+
+msgid "The ZIP archive is invalid."
+msgstr "Archiv ZIP je neplatný."
+
+msgid "The ZIP archive contains too many entries."
+msgstr "Archiv ZIP obsahuje příliš mnoho položek."
+
+msgid "The ZIP archive contains an unsafe path or link."
+msgstr "Archiv ZIP obsahuje nebezpečnou cestu nebo odkaz."
+
+msgid "The ZIP archive expands beyond the configured size limit."
+msgstr "Rozbalený archiv ZIP překračuje povolenou velikost."
+
+msgid "The ZIP archive exceeds the configured compression ratio."
+msgstr "Poměr komprese archivu ZIP překračuje povolený limit."
+
+msgid "Encrypted ZIP archives are not supported."
+msgstr "Šifrované archivy ZIP nejsou podporovány."
+
+msgid "The ZIP archive contains no supported audio files."
+msgstr "Archiv ZIP neobsahuje žádné podporované zvukové soubory."
+
+msgid "The RAR archive contains too many entries."
+msgstr "Archiv RAR obsahuje příliš mnoho položek."
+
+msgid "The RAR archive contains an unsafe path or link."
+msgstr "Archiv RAR obsahuje nebezpečnou cestu nebo odkaz."
+
+msgid "The RAR archive expands beyond the configured size limit."
+msgstr "Rozbalený archiv RAR překračuje povolenou velikost."
+
+msgid "The RAR archive exceeds the configured compression ratio."
+msgstr "Poměr komprese archivu RAR překračuje povolený limit."
+
+msgid "Password-protected RAR archives are not supported."
+msgstr "Archivy RAR chráněné heslem nejsou podporovány."
+
+msgid "The RAR archive contains no supported audio files."
+msgstr "Archiv RAR neobsahuje žádné podporované zvukové soubory."
+
+msgid "The RAR archive is invalid or cannot be read."
+msgstr "Archiv RAR je neplatný nebo jej nelze přečíst."
+
+msgid "Added to the shared music library."
+msgstr "Přidáno do sdílené hudební knihovny."
+
+msgid "This audio file has already been uploaded."
+msgstr "Tento zvukový soubor už byl nahrán."
+
+msgid "The file exceeds the configured per-file size limit."
+msgstr "Soubor překračuje nastavený limit velikosti."
+
+msgid "The user's rolling 24-hour upload quota would be exceeded."
+msgstr "Byl by překročen uživatelský limit nahrávání za posledních 24 hodin."
+
+msgid "Extracted from ZIP and added to the shared music library."
+msgstr "Rozbaleno z ZIP a přidáno do sdílené hudební knihovny."
+
+msgid "Extracted from RAR and added to the shared music library."
+msgstr "Rozbaleno z RAR a přidáno do sdílené hudební knihovny."
+
+msgid "The ZIP archive contains an unreadable audio file."
+msgstr "Archiv ZIP obsahuje nečitelný zvukový soubor."
+
+msgid "The RAR archive contains an unreadable audio file."
+msgstr "Archiv RAR obsahuje nečitelný zvukový soubor."
+
+msgid "Select at least one file."
+msgstr "Vyberte alespoň jeden soubor."
+
+msgid "At most %(max_files)s files can be uploaded in one request."
+msgstr "V jednom požadavku lze nahrát nejvýše %(max_files)s souborů."
+
+msgid "The total upload request exceeds the server limit."
+msgstr "Celková velikost nahrávání překračuje limit serveru."
+
+msgid "Server storage is unavailable."
+msgstr "Úložiště serveru není dostupné."
+
+msgid "The server could not process this file."
+msgstr "Server tento soubor nedokázal zpracovat."
+
+msgid "Added %(count)s audio file(s) from the ZIP archive."
+msgstr "Počet zvukových souborů přidaných z archivu ZIP: %(count)s."
+
+msgid "Added %(count)s audio file(s) from the RAR archive."
+msgstr "Počet zvukových souborů přidaných z archivu RAR: %(count)s."
+
+msgid "Unsupported file type. ZIP, RAR, or a supported audio format is required."
+msgstr "Nepodporovaný typ souboru. Je vyžadován ZIP, RAR nebo podporovaný zvukový formát."
+
+msgid "%(name)s: file exceeds the configured per-file size limit."
+msgstr "%(name)s: soubor překračuje nastavený limit velikosti."
+
+msgid "%(name)s: this audio file has already been uploaded."
+msgstr "%(name)s: tento zvukový soubor už byl nahrán."

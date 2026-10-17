@@ -16,10 +16,11 @@ from django.db.models import Sum
 from django.http import JsonResponse
 from django.shortcuts import redirect, render
 from django.utils import timezone
+from django.utils.translation import gettext as _
 from django.views.decorators.http import require_http_methods
 
 from .models import UploadPolicy, UploadRecord, UserUploadLimit
-from .validators import UploadRejected, incoming_directory, inspect_audio, is_zip_name, safe_basename, validate_archive
+from .validators import UploadRejected, incoming_directory, inspect_audio, safe_basename, validate_archive, validate_rar
 
 logger = logging.getLogger(__name__)
 
@@ -89,11 +90,11 @@ def record_success(user, original_name, stored_name, size, digest):
                 size=size,
                 sha256=digest,
                 status=UploadRecord.Status.SUCCESS,
-                message="Added to the shared music library.",
+                message=_("Added to the shared music library."),
             )
     except IntegrityError:
         (settings.UPLOAD_LIBRARY_DIR / "Uploads" / stored_name).unlink(missing_ok=True)
-        raise UploadRejected("This audio file has already been uploaded.")
+        raise UploadRejected(_("This audio file has already been uploaded."))
 
 
 def process_audio(user, stream, original_name, size, policy):
@@ -108,11 +109,11 @@ def process_audio(user, stream, original_name, size, policy):
     digest = digest_obj.hexdigest()
     stream.seek(0)
     if UploadRecord.objects.filter(sha256=digest, status=UploadRecord.Status.SUCCESS).exists():
-        raise UploadRejected("This audio file has already been uploaded.")
+        raise UploadRejected(_("This audio file has already been uploaded."))
     if size > policy.max_file_size:
-        raise UploadRejected("The file exceeds the configured per-file size limit.")
+        raise UploadRejected(_("The file exceeds the configured per-file size limit."))
     if used_quota(user) + size > quota_for(user, policy):
-        raise UploadRejected("The user's rolling 24-hour upload quota would be exceeded.")
+        raise UploadRejected(_("The user's rolling 24-hour upload quota would be exceeded."))
     stored_name = write_to_library(stream, original_name, digest)
     try:
         record_success(user, original_name, stored_name, size, digest)
@@ -143,19 +144,19 @@ def process_zip(user, uploaded_file, original_name, policy):
                         member_size += len(chunk)
                         actual_audio_size += len(chunk)
                         if actual_audio_size > policy.max_archive_expanded_size:
-                            raise UploadRejected("The ZIP archive expands beyond the configured size limit.")
+                            raise UploadRejected(_("The ZIP archive expands beyond the configured size limit."))
                         digest_obj.update(chunk)
                         member.write(chunk)
                 if member_size > policy.max_file_size:
-                    raise UploadRejected(f"{member_name}: file exceeds the configured per-file size limit.")
+                    raise UploadRejected(_("%(name)s: file exceeds the configured per-file size limit.") % {"name": member_name})
                 digest = digest_obj.hexdigest()
                 with open(stage_path, "rb") as member:
                     inspect_audio(member, member_name)
                 if UploadRecord.objects.filter(sha256=digest, status=UploadRecord.Status.SUCCESS).exists():
-                    raise UploadRejected(f"{member_name}: this audio file has already been uploaded.")
+                    raise UploadRejected(_("%(name)s: this audio file has already been uploaded.") % {"name": member_name})
                 staged.append((stage_path, f"{safe_basename(original_name)}/{member_name}", member_name, member_size, digest))
             if used_quota(user) + actual_audio_size > quota_for(user, policy):
-                raise UploadRejected("The user's rolling 24-hour upload quota would be exceeded.")
+                raise UploadRejected(_("The user's rolling 24-hour upload quota would be exceeded."))
             prepared = []
             for stage_path, member_original, member_name, size, digest in staged:
                 with open(stage_path, "rb") as member:
@@ -172,16 +173,95 @@ def process_zip(user, uploaded_file, original_name, policy):
                         size=size,
                         sha256=digest,
                         status=UploadRecord.Status.SUCCESS,
-                        message="Extracted from ZIP and added to the shared music library.",
+                        message=_("Extracted from ZIP and added to the shared music library."),
                     )
     except (zipfile.BadZipFile, RuntimeError) as exc:
-        raise UploadRejected("The ZIP archive contains an unreadable audio file.") from exc
+        raise UploadRejected(_("The ZIP archive contains an unreadable audio file.")) from exc
     except Exception:
         for stored_name in stored_files:
             (settings.UPLOAD_LIBRARY_DIR / "Uploads" / stored_name).unlink(missing_ok=True)
         raise
     finally:
         archive.close()
+    return len(stored_files)
+
+
+def process_rar(user, uploaded_file, original_name, policy):
+    """Stage RAR to disk for the external unar backend, then extract audio safely."""
+    staged = []
+    stored_files = []
+    archive = None
+    try:
+        with tempfile.TemporaryDirectory(dir=incoming_directory()) as work_dir:
+            archive_path = os.path.join(work_dir, "upload.rar")
+            uploaded_file.seek(0)
+            with open(archive_path, "wb") as destination:
+                shutil.copyfileobj(uploaded_file, destination, length=1024 * 1024)
+            archive, infos, _ = validate_rar(archive_path, policy)
+            actual_audio_size = 0
+            for index, info in enumerate(infos):
+                member_name = PurePosixPath(info.filename.replace("\\", "/")).name
+                if not member_name:
+                    continue
+                stage_path = os.path.join(work_dir, str(index))
+                digest_obj = hashlib.sha256()
+                member_size = 0
+                with archive.open(info) as source, open(stage_path, "wb") as member:
+                    while True:
+                        chunk = source.read(1024 * 1024)
+                        if not chunk:
+                            break
+                        member_size += len(chunk)
+                        actual_audio_size += len(chunk)
+                        if actual_audio_size > policy.max_archive_expanded_size:
+                            raise UploadRejected(_("The RAR archive expands beyond the configured size limit."))
+                        digest_obj.update(chunk)
+                        member.write(chunk)
+                if member_size > policy.max_file_size:
+                    raise UploadRejected(_("%(name)s: file exceeds the configured per-file size limit.") % {"name": member_name})
+                digest = digest_obj.hexdigest()
+                with open(stage_path, "rb") as member:
+                    inspect_audio(member, member_name)
+                if UploadRecord.objects.filter(sha256=digest, status=UploadRecord.Status.SUCCESS).exists():
+                    raise UploadRejected(_("%(name)s: this audio file has already been uploaded.") % {"name": member_name})
+                staged.append((stage_path, f"{safe_basename(original_name)}/{member_name}", member_name, member_size, digest))
+            if used_quota(user) + actual_audio_size > quota_for(user, policy):
+                raise UploadRejected(_("The user's rolling 24-hour upload quota would be exceeded."))
+            prepared = []
+            for stage_path, member_original, member_name, size, digest in staged:
+                with open(stage_path, "rb") as member:
+                    stored_name = write_to_library(member, member_name, digest)
+                    stored_files.append(stored_name)
+                prepared.append((member_original, stored_name, size, digest))
+            with transaction.atomic():
+                for member_original, stored_name, size, digest in prepared:
+                    UploadRecord.objects.create(
+                        user=user,
+                        username_snapshot=user.get_username(),
+                        original_name=member_original[:500],
+                        stored_name=stored_name,
+                        size=size,
+                        sha256=digest,
+                        status=UploadRecord.Status.SUCCESS,
+                        message=_("Extracted from RAR and added to the shared music library."),
+                    )
+    except UploadRejected:
+        for stored_name in stored_files:
+            (settings.UPLOAD_LIBRARY_DIR / "Uploads" / stored_name).unlink(missing_ok=True)
+        raise
+    except Exception as exc:
+        for stored_name in stored_files:
+            (settings.UPLOAD_LIBRARY_DIR / "Uploads" / stored_name).unlink(missing_ok=True)
+        try:
+            import rarfile
+            if isinstance(exc, (rarfile.Error, EOFError, RuntimeError)):
+                raise UploadRejected(_("The RAR archive contains an unreadable audio file.")) from exc
+        except ImportError:
+            pass
+        raise
+    finally:
+        if archive:
+            archive.close()
     return len(stored_files)
 
 
@@ -207,19 +287,19 @@ def upload_files(request):
     policy = get_policy()
     files = request.FILES.getlist("files")
     if not files:
-        message = "Select at least one file."
+        message = _("Select at least one file.")
         if request.headers.get("X-Requested-With") == "XMLHttpRequest":
             return JsonResponse({"ok": False, "errors": [message]}, status=400)
         messages.error(request, message)
         return redirect("dashboard")
     if len(files) > policy.max_files_per_request:
-        message = f"At most {policy.max_files_per_request} files can be uploaded in one request."
+        message = _("At most %(max_files)s files can be uploaded in one request.") % {"max_files": policy.max_files_per_request}
         if request.headers.get("X-Requested-With") == "XMLHttpRequest":
             return JsonResponse({"ok": False, "errors": [message]}, status=400)
         messages.error(request, message)
         return redirect("dashboard")
     if sum(uploaded_file.size for uploaded_file in files) > settings.MAX_UPLOAD_REQUEST_BYTES:
-        message = "The total upload request exceeds the server limit."
+        message = _("The total upload request exceeds the server limit.")
         if request.headers.get("X-Requested-With") == "XMLHttpRequest":
             return JsonResponse({"ok": False, "errors": [message]}, status=413)
         messages.error(request, message)
@@ -230,24 +310,28 @@ def upload_files(request):
         name = safe_basename(uploaded_file.name)
         try:
             if uploaded_file.size > policy.max_file_size:
-                raise UploadRejected("The file exceeds the configured per-file size limit.")
-            if is_zip_name(name):
+                raise UploadRejected(_("The file exceeds the configured per-file size limit."))
+            extension = os.path.splitext(name.lower())[1]
+            if extension == ".zip":
                 count = process_zip(request.user, uploaded_file, name, policy)
-                results.append({"name": name, "status": "success", "message": f"Added {count} audio file(s) from the ZIP archive."})
+                results.append({"name": name, "status": "success", "message": _("Added %(count)s audio file(s) from the ZIP archive.") % {"count": count}})
+            elif extension == ".rar":
+                count = process_rar(request.user, uploaded_file, name, policy)
+                results.append({"name": name, "status": "success", "message": _("Added %(count)s audio file(s) from the RAR archive.") % {"count": count}})
             else:
                 process_audio(request.user, uploaded_file, name, uploaded_file.size, policy)
-                results.append({"name": name, "status": "success", "message": "Added to the shared music library."})
+                results.append({"name": name, "status": "success", "message": _("Added to the shared music library.")})
         except UploadRejected as exc:
             record_failure(request.user, name, str(exc), uploaded_file.size)
             results.append({"name": name, "status": "failed", "message": str(exc)})
         except OSError:
             logger.exception("Upload storage failure for user id=%s", request.user.pk)
-            record_failure(request.user, name, "Server storage is unavailable.", uploaded_file.size)
-            results.append({"name": name, "status": "failed", "message": "Server storage is unavailable."})
+            record_failure(request.user, name, _("Server storage is unavailable."), uploaded_file.size)
+            results.append({"name": name, "status": "failed", "message": _("Server storage is unavailable.")})
         except Exception:
             logger.exception("Unexpected upload failure for user id=%s", request.user.pk)
-            record_failure(request.user, name, "The server could not process this file.", uploaded_file.size)
-            results.append({"name": name, "status": "failed", "message": "The server could not process this file."})
+            record_failure(request.user, name, _("The server could not process this file."), uploaded_file.size)
+            results.append({"name": name, "status": "failed", "message": _("The server could not process this file.")})
 
     if request.headers.get("X-Requested-With") == "XMLHttpRequest":
         return JsonResponse({"ok": all(item["status"] == "success" for item in results), "results": results})

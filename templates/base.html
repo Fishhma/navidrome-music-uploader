@@ -1,27 +1,39 @@
-{% load static %}
+{% load static i18n %}
 <!doctype html>
-<html lang="ru">
+<html lang="{{ LANGUAGE_CODE }}">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="color-scheme" content="dark">
-  <title>{% block title %}Музыкальная библиотека{% endblock %}</title>
+  <title>{% block title %}{% trans "Music library" %}{% endblock %}</title>
   <link rel="stylesheet" href="{% static 'css/app.css' %}">
 </head>
 <body>
   <header class="topbar">
     <a class="brand" href="{% url 'dashboard' %}"><span class="brand-mark">♫</span> Music Uploader</a>
-    {% if user.is_authenticated %}
-    <nav><span class="user-label">{{ user.username }}</span>{% if user.is_staff %}<a href="{% url 'admin:index' %}">Администрирование</a>{% endif %}
-      <form method="post" action="{% url 'logout' %}">{% csrf_token %}<button class="link-button" type="submit">Выйти</button></form>
+    <nav class="topbar-actions">
+      <form class="language-form" method="post" action="{% url 'set_language' %}">
+        {% csrf_token %}
+        <input type="hidden" name="next" value="{{ request.get_full_path }}">
+        <label class="visually-hidden" for="language-select">{% trans "Language" %}</label>
+        <select id="language-select" name="language" aria-label="{% trans 'Language' %}" onchange="this.form.submit()">
+          <option value="ru"{% if LANGUAGE_CODE == "ru" %} selected{% endif %}>Русский</option>
+          <option value="cs"{% if LANGUAGE_CODE == "cs" %} selected{% endif %}>Čeština</option>
+          <option value="en"{% if LANGUAGE_CODE == "en" %} selected{% endif %}>English</option>
+        </select>
+      </form>
+      {% if user.is_authenticated %}
+      <span class="user-label">{{ user.username }}</span>
+      {% if user.is_staff %}<a href="{% url 'admin:index' %}">{% trans "Administration" %}</a>{% endif %}
+      <form method="post" action="{% url 'logout' %}">{% csrf_token %}<button class="link-button" type="submit">{% trans "Log out" %}</button></form>
+      {% endif %}
     </nav>
-    {% endif %}
   </header>
   <main class="page">
     {% if messages %}<section class="messages" aria-live="polite">{% for message in messages %}<div class="notice {{ message.tags }}">{{ message }}</div>{% endfor %}</section>{% endif %}
     {% block content %}{% endblock %}
   </main>
-  <footer>Личная загрузка в вашу общую музыкальную библиотеку</footer>
+  <footer>{% trans "Private uploads to your shared music library" %}</footer>
   {% block scripts %}{% endblock %}
 </body>
 </html>

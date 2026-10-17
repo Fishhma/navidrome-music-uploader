@@ -42,7 +42,7 @@
     if (!chosenFiles.length) return;
     button.disabled = true;
     progress.hidden = false;
-    progressLabel.textContent = "Загрузка файлов…";
+    progressLabel.textContent = form.dataset.uploading;
     const data = new FormData(form);
     data.delete("files");
     chosenFiles.forEach((file) => data.append("files", file, file.name));
@@ -53,25 +53,25 @@
       if (!progressEvent.lengthComputable) return;
       const percent = Math.round((progressEvent.loaded / progressEvent.total) * 100);
       progressBar.style.width = `${percent}%`;
-      progressLabel.textContent = `Передача файлов: ${percent}%`;
+      progressLabel.textContent = `${form.dataset.transfer} ${percent}%`;
     });
     request.addEventListener("load", () => {
       try {
         const response = JSON.parse(request.responseText);
         progressLabel.textContent = response.results
           ? response.results.map((result) => `${result.name}: ${result.message}`).join(" · ")
-          : (response.errors || ["Ошибка загрузки."]).join(" · ");
+          : (response.errors || [form.dataset.uploadError]).join(" · ");
       } catch {
-        progressLabel.textContent = "Не удалось обработать ответ сервера.";
+        progressLabel.textContent = form.dataset.responseError;
       }
       window.setTimeout(() => window.location.reload(), 1400);
     });
     request.addEventListener("error", () => {
-      progressLabel.textContent = "Ошибка сети. Проверьте подключение и обновите страницу.";
+      progressLabel.textContent = form.dataset.networkError;
       button.disabled = false;
     });
     request.addEventListener("abort", () => {
-      progressLabel.textContent = "Загрузка отменена.";
+      progressLabel.textContent = form.dataset.aborted;
       button.disabled = false;
     });
     request.send(data);
