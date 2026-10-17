@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Загрузка музыки · Music Uploader{% endblock %}
+{% block content %}
+<section class="welcome">
+  <div><p class="eyebrow">ОБЩАЯ БИБЛИОТЕКА</p><h1>Загрузить музыку</h1><p class="muted">Файлы появятся в общей библиотеке Navidrome после индексации.</p></div>
+  <div class="quota-card"><span>Использовано за 24 часа</span><strong>{{ used|filesizeformat }} <small>/ {{ quota|filesizeformat }}</small></strong><div class="meter"><i style="width:{% if quota %}{% widthratio used quota 100 %}{% else %}0{% endif %}%"></i></div></div>
+</section>
+
+<section class="panel uploader">
+  <form id="upload-form" action="{% url 'upload' %}" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <input id="file-picker" type="file" name="files" multiple accept="audio/*,.zip" hidden>
+    <button type="button" id="drop-zone" class="drop-zone">
+      <span class="upload-icon">↑</span><strong>Перетащите файлы сюда</strong><span class="muted">или нажмите, чтобы выбрать файлы</span>
+      <small>MP3, FLAC, WAV, OGG, Opus, M4A, AAC, AIFF, WMA · ZIP без RAR</small>
+    </button>
+    <div id="selection" class="selection" hidden></div>
+    <div class="upload-controls"><span class="muted">До {{ policy.max_file_size|filesizeformat }} на файл · до {{ policy.max_files_per_request }} файлов за раз</span><button id="upload-button" class="button primary" type="submit" disabled>Загрузить файлы</button></div>
+    <div id="progress-wrap" class="progress-wrap" hidden><div class="progress-track"><i id="progress-bar"></i></div><span id="progress-label">Подготовка…</span></div>
+  </form>
+</section>
+
+<section class="history-section">
+  <div class="section-heading"><div><p class="eyebrow">ЛИЧНАЯ АКТИВНОСТЬ</p><h2>Последние загрузки</h2></div><span class="muted">История видна только вам</span></div>
+  <div class="panel history-panel">
+    {% if records %}
+    <div class="history-list">{% for record in records %}
+      <article class="history-row">
+        <span class="file-icon {% if record.status == 'success' %}ok{% else %}bad{% endif %}">{% if record.status == 'success' %}♫{% else %}!{% endif %}</span>
+        <div class="record-main"><strong title="{{ record.original_name }}">{{ record.original_name }}</strong><span class="muted">{{ record.uploaded_at|date:"d.m.Y H:i" }} · {{ record.size|filesizeformat }}{% if record.message %} · {{ record.message }}{% endif %}</span></div>
+        <span class="status {% if record.status == 'success' %}success{% else %}failed{% endif %}">{% if record.status == 'success' %}Готово{% else %}Ошибка{% endif %}</span>
+      </article>
+    {% endfor %}</div>
+    {% else %}<div class="empty-state"><span>♫</span><strong>Загрузок пока нет</strong><p class="muted">Выбранные файлы появятся здесь со статусом обработки.</p></div>{% endif %}
+  </div>
+</section>
+{% endblock %}
+{% block scripts %}<script src="{% static 'js/upload.js' %}" defer></script>{% endblock %}

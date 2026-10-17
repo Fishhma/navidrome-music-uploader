@@ -1,0 +1,27 @@
+{% load static %}
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <title>{% block title %}Музыкальная библиотека{% endblock %}</title>
+  <link rel="stylesheet" href="{% static 'css/app.css' %}">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="{% url 'dashboard' %}"><span class="brand-mark">♫</span> Music Uploader</a>
+    {% if user.is_authenticated %}
+    <nav><span class="user-label">{{ user.username }}</span>{% if user.is_staff %}<a href="{% url 'admin:index' %}">Администрирование</a>{% endif %}
+      <form method="post" action="{% url 'logout' %}">{% csrf_token %}<button class="link-button" type="submit">Выйти</button></form>
+    </nav>
+    {% endif %}
+  </header>
+  <main class="page">
+    {% if messages %}<section class="messages" aria-live="polite">{% for message in messages %}<div class="notice {{ message.tags }}">{{ message }}</div>{% endfor %}</section>{% endif %}
+    {% block content %}{% endblock %}
+  </main>
+  <footer>Личная загрузка в вашу общую музыкальную библиотеку</footer>
+  {% block scripts %}{% endblock %}
+</body>
+</html>

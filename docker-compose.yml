@@ -1,0 +1,44 @@
+services:
+  music-uploader:
+    build:
+      context: .
+      args:
+        APP_UID: ${DJANGO_UID:-1000}
+        APP_GID: ${DJANGO_GID:-1000}
+    container_name: navidrome-music-uploader
+    restart: unless-stopped
+    environment:
+      DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY:?Set DJANGO_SECRET_KEY in .env before starting}
+      DJANGO_DEBUG: "0"
+      DJANGO_ALLOWED_HOSTS: ${DJANGO_ALLOWED_HOSTS:-localhost,127.0.0.1,192.168.0.110}
+      DJANGO_CSRF_TRUSTED_ORIGINS: ${DJANGO_CSRF_TRUSTED_ORIGINS:-}
+      DJANGO_SECURE_COOKIES: ${DJANGO_SECURE_COOKIES:-0}
+      TIME_ZONE: ${TIME_ZONE:-Europe/Moscow}
+      DJANGO_DATABASE_PATH: /data/db.sqlite3
+      UPLOAD_INCOMING_DIR: /incoming
+      UPLOAD_LIBRARY_DIR: /music
+    ports:
+      - "4580:8000"
+    volumes:
+      - uploader_data:/data
+      - uploader_incoming:/incoming
+      - /home/marian/navidrome/music:/music
+    read_only: true
+    tmpfs:
+      - /tmp:size=64m,mode=1777
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    pids_limit: 100
+    mem_limit: 512m
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/accounts/login/', timeout=3)"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+
+volumes:
+  uploader_data:
+  uploader_incoming:
