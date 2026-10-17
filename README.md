@@ -1,6 +1,6 @@
 # Navidrome Music Uploader
 
-Standalone Django web app for authenticated uploads into an **existing** Navidrome music directory. It does not create, replace, or configure Navidrome. The Compose service publishes port `4580` to the home network and is intended for trusted LAN access or separately secured access.
+Standalone Django web app for authenticated uploads into an **existing** Navidrome music directory. It does not create, replace, or configure Navidrome. The Compose service publishes port `4580` to the home network(for now) and is intended for trusted LAN access or separately secured access.
 
 ## Features
 
@@ -13,13 +13,13 @@ Standalone Django web app for authenticated uploads into an **existing** Navidro
 
 ## Prepare the existing server
 
-The Compose bind mount is configured for the supplied host path `/home/marian/navidrome/music`; change only that mount source if your existing library path differs. Do not recreate or edit the Navidrome service.
+The Compose bind mount is configured for the supplied host path `/path/to/navidrome/music`; change only that mount source if your existing library path differs. Do not recreate or edit the Navidrome service.
 
 The container runs with the configured `DJANGO_UID`/`DJANGO_GID` (defaults `1000:1000`), matching the reported Navidrome owner. On the host, verify the existing library path and allow that account to write to it; do not use broad `chmod 777`:
 
 ```sh
 id
-stat -c '%U:%G %a %n' /home/marian/navidrome/music
+stat -c '%U:%G %a %n' /path/to/navidrome/music
 ```
 
 If this UID/GID does not already have the required directory write permission, coordinate a narrowly scoped host ownership/group or ACL change with the server administrator. The application intentionally leaves permissions and ownership inherited from the host directory.
