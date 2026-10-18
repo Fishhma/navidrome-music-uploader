@@ -6,11 +6,10 @@ Standalone Django web app for authenticated uploads into an **existing** Navidro
 
 - Separate Django accounts, password hashing, CSRF-protected login/logout, and per-user upload history.
 - Django Admin user enable/disable, global upload policy, optional per-user rolling 24-hour quota, and full upload history.
-- Multi-file selection, drag-and-drop, recursive folder selection, transfer progress, and result messages.
-- Content-signature checks for supported audio formats and cover images (JPG/JPEG, PNG, WEBP, GIF, BMP).
-- ZIP support for unencrypted archives, traditional ZipCrypto, and AES-encrypted ZIP files. RAR/RAR5 support uses `rarfile` with the `unar` backend; password-protected RAR support depends on archive variant and backend capabilities.
-- Archive paths are validated and preserved under a unique collection folder so album cover art stays next to related music. Non-media files are ignored but still count toward the 100-file limit and archive size checks.
-- Private SQLite and incoming-upload volumes; validated media files are written atomically into `/music/Uploads/`. The application does not chown or loosen permissions on the shared library.
+- Multi-file selection, drag-and-drop, transfer progress, and result messages.
+- Content-signature checks for MP3, FLAC, WAV, OGG/Opus, M4A/M4B, AAC, AIFF, and WMA. ZIP and RAR archives are supported; password-protected RAR files, including encrypted headers, accept a password in the upload form.
+- Archive traversal, symlink, entry-count, expanded-size, compression-ratio, audio-format, duplicate, file-size, and quota checks. Encrypted ZIP archives remain unsupported.
+- Private SQLite and incoming-upload volumes; validated tracks are atomically renamed into `/music/Uploads/`. The application does not chown or loosen permissions on the shared library.
 
 ## Prepare the existing server
 
@@ -50,11 +49,9 @@ Navidrome sees new tracks under its existing mounted library at its next library
 
 ## Limits and operational notes
 
-- Defaults: 1 GiB per uploaded file/archive, 2 GiB total HTTP request, 100 selected files per request, 100 file entries per archive, 4 GiB maximum expanded size per archive, and maximum 100:1 expansion ratio. The default rolling 24-hour per-user quota remains 1 GiB and is intentionally unchanged. Administrators can tune size limits in Django Admin; per-user quota overrides remain under **User upload limits**.
-- All non-directory files inside ZIP/RAR archives count toward the 100-entry limit, including images and ignored documents. Directory records do not count. Folder selection counts all files, including unsupported files; unsupported non-media files are skipped.
-- Folder and archive relative paths are kept under a unique collection folder. Supported cover images are stored with their original filenames, while audio filenames are sanitized and given a unique suffix. Duplicate-content detection remains global across successful uploads.
-- Encrypted archives prompt for a password only when needed. Passwords are sent only for the retry request and are not stored in upload history. Use HTTPS if credentials must be protected from other devices on the network.
-- Nested archives inside a selected folder are not unpacked. Transcoding and audio metadata parsing are not supported. Validation checks file signatures, not full codec/image integrity; Navidrome remains responsible for catalog indexing.
+- Defaults: 100 MiB per upload (and expanded archive), 20 selected files per request, 1 GiB per user in a rolling 24 hours, 100 archive entries, 1 GiB expanded size, and maximum 100:1 expansion ratio. Administrators may change policy values in Django Admin. Per-user quota overrides are managed under **User upload limits**.
+- Files are written under `Uploads/` with a sanitized basename, content hash, and random suffix. Exact-content duplicate detection is global across successful upload history.
+- Archive extraction accepts only regular, supported audio members and does not preserve archive paths. Unsafe paths/links or unreadable/invalid audio reject the archive. Non-audio archive entries are ignored. The Docker image includes `unar` for RAR extraction, and `cryptography` enables encrypted RAR-header parsing; nested archive extraction, transcoding, and audio metadata parsing are not supported.
 - Validation checks file signatures, not full codec integrity. The Navidrome scanner remains responsible for catalog indexing.
 - A user with Django staff privileges can access Django Admin; grant that role only to trusted administrators. User accounts are created by an admin; public self-registration is not provided.
 - The container has no root privileges, drops Linux capabilities, uses read-only root filesystem, and has memory/PID limits. Restrict access at the host firewall and reverse proxy as appropriate.
@@ -68,4 +65,4 @@ python manage.py migrate
 python manage.py test
 ```
 
-Tests use an isolated temporary SQLite database and temporary upload/library folders. The upload request body is capped at 2 GiB by the streaming Django upload handler, with individual files capped at 1 GiB; the reverse-proxy port binding and host network policy should remain restrictive.
+Tests use an isolated temporary SQLite database and temporary upload/library folders. The upload request body is capped at 512 MiB by the streaming Django upload handler; the reverse-proxy port binding and host network policy should remain restrictive.

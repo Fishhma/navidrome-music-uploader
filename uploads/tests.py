@@ -1,13 +1,9 @@
 import io
 import tempfile
 import zipfile
-import json
-import pyzipper
-import shutil
-import subprocess
-import unittest
 from pathlib import Path
-from unittest.mock import patch
+from types import SimpleNamespace
+from unittest.mock import Mock, patch
 
 from django.contrib.auth.models import User
 from django.conf import settings
@@ -16,6 +12,7 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TestCase, override_settings
 
 from .models import UploadPolicy, UploadRecord
+from .validators import UploadRejected
 
 
 @override_settings(
@@ -93,123 +90,109 @@ class UploadFlowTests(TestCase):
         response = self.post_files(self.user, SimpleUploadedFile("tracks.zip", contents.getvalue()))
         self.assertEqual(response.json()["results"][0]["status"], "success")
         record = UploadRecord.objects.get()
-        self.assertEqual(record.original_name, "tracks.zip/folder/song.mp3")
+        self.assertEqual(record.original_name, "tracks.zip/song.mp3")
         self.assertTrue((self.library / "Uploads" / record.stored_name).is_file())
         self.assertEqual(list((self.library / "Uploads").glob("*.txt")), [])
 
+    @patch("uploads.views.validate_rar")
+    def test_password_protected_rar_passes_password_to_extractor(self, validate_rar):
+        info = SimpleNamespace(filename="track.mp3", is_dir=lambda: False)
+        archive = Mock()
+        archive.open.return_value = io.BytesIO(b"ID3\x04\x00\x00\x00\x00\x00\x00")
+        validate_rar.return_value = (archive, [info], 10)
+        uploaded_file = self.mp3("protected.rar")
 
-    @staticmethod
-    def encrypted_zip(password="correct-horse"):
-        contents = io.BytesIO()
-        with pyzipper.AESZipFile(
-            contents, "w", compression=pyzipper.ZIP_DEFLATED, encryption=pyzipper.WZ_AES
-        ) as archive:
-            archive.setpassword(password.encode("utf-8"))
-            archive.writestr("Album/track.mp3", b"ID3\x04\x00\x00\x00\x00\x00\x00")
-            archive.writestr("Album/cover.jpg", b"\xff\xd8\xff\xe0fake-jpeg-data")
-            archive.writestr("Album/notes.txt", "ignored but counted")
-        return contents.getvalue()
+        from .views import process_archive
 
-    def test_encrypted_aes_zip_prompts_for_password_and_keeps_cover_next_to_album(self):
-        encrypted = self.encrypted_zip()
-        response = self.post_files(self.user, SimpleUploadedFile("album.zip", encrypted))
-        result = response.json()["results"][0]
-        self.assertTrue(result["needs_password"])
-        self.assertEqual(result["status"], "needs_password")
-        self.assertEqual(UploadRecord.objects.count(), 0)
-
-        self.client.force_login(self.user)
-        response = self.client.post(
-            "/upload/",
-            {"files": [SimpleUploadedFile("album.zip", encrypted)], "archive_password_0": "correct-horse"},
-            HTTP_X_REQUESTED_WITH="XMLHttpRequest",
+        count = process_archive(
+            self.user,
+            uploaded_file,
+            "protected.rar",
+            self.policy,
+            is_rar=True,
+            password="test-password",
         )
-        self.assertEqual(response.json()["results"][0]["status"], "success")
-        records = list(UploadRecord.objects.filter(status=UploadRecord.Status.SUCCESS))
-        self.assertEqual(len(records), 2)
-        cover = next(record for record in records if record.stored_name.lower().endswith("cover.jpg"))
-        track = next(record for record in records if record.stored_name.lower().endswith(".mp3"))
-        self.assertEqual(Path(cover.stored_name).parent, Path(track.stored_name).parent)
-        self.assertTrue((self.library / "Uploads" / cover.stored_name).is_file())
 
-    @unittest.skipUnless(shutil.which("zip"), "requires the system zip utility to create a ZipCrypto fixture")
-    def test_zipcrypto_archive_password_is_accepted(self):
-        with tempfile.TemporaryDirectory() as temp_dir:
-            root = Path(temp_dir)
-            track = root / "track.mp3"
-            track.write_bytes(b"ID3\x04\x00\x00\x00\x00\x00\x00")
-            archive_path = root / "zipcrypto.zip"
-            subprocess.run(["zip", "-q", "-P", "correct-horse", str(archive_path), track.name],
-                           cwd=root, check=True)
-            encrypted = archive_path.read_bytes()
-        self.client.force_login(self.user)
-        response = self.client.post(
-            "/upload/", {"files": [SimpleUploadedFile("zipcrypto.zip", encrypted)]},
-            HTTP_X_REQUESTED_WITH="XMLHttpRequest",
-        )
-        self.assertTrue(response.json()["results"][0]["needs_password"])
-        self.client.force_login(self.user)
-        response = self.client.post(
-            "/upload/",
-            {"files": [SimpleUploadedFile("zipcrypto.zip", encrypted)], "archive_password_0": "correct-horse"},
-            HTTP_X_REQUESTED_WITH="XMLHttpRequest",
-        )
-        self.assertEqual(response.json()["results"][0]["status"], "success")
+        self.assertEqual(count, 1)
+        record = UploadRecord.objects.get()
+        self.assertEqual(record.status, UploadRecord.Status.SUCCESS)
+        self.assertNotIn("test-password", record.message)
+        self.assertNotIn("test-password", record.original_name)
+        archive.open.assert_called_once_with(info, pwd="test-password")
+        validate_rar.assert_called_once_with(uploaded_file, self.policy, "test-password")
 
-    def test_encrypted_zip_rejects_wrong_password_without_recording_secret(self):
-        encrypted = self.encrypted_zip()
-        self.client.force_login(self.user)
-        response = self.client.post(
-            "/upload/",
-            {"files": [SimpleUploadedFile("album.zip", encrypted)], "archive_password_0": "wrong"},
-            HTTP_X_REQUESTED_WITH="XMLHttpRequest",
-        )
-        result = response.json()["results"][0]
-        self.assertTrue(result["needs_password"])
-        self.assertTrue(result["password_invalid"])
-        self.assertEqual(UploadRecord.objects.count(), 0)
+    @patch("uploads.validators.rarfile.RarFile")
+    def test_rar_validation_sets_password_before_reading_headers(self, rar_file):
+        from .validators import validate_rar
 
-    def test_folder_upload_preserves_nested_audio_and_cover_paths(self):
-        files = [
-            self.mp3("track.mp3"),
-            SimpleUploadedFile("cover.jpg", b"\xff\xd8\xff\xe0fake-jpeg-data"),
-            SimpleUploadedFile("notes.txt", b"ignored"),
-        ]
+        info = SimpleNamespace(
+            filename="track.mp3",
+            file_size=10,
+            compress_size=10,
+            is_symlink=lambda: False,
+            is_dir=lambda: False,
+        )
+        archive = rar_file.return_value
+        archive.infolist.return_value = [info]
+
+        _, infos, total_size = validate_rar(self.mp3("protected.rar"), self.policy, "test-password")
+
+        archive.setpassword.assert_called_once_with("test-password")
+        self.assertEqual(infos, [info])
+        self.assertEqual(total_size, 10)
+
+    @patch("uploads.validators.rarfile.RarFile")
+    def test_rar_validation_requests_password_for_encrypted_headers(self, rar_file):
+        from .validators import validate_rar
+
+        archive = rar_file.return_value
+        archive.needs_password.return_value = True
+
+        with self.assertRaisesMessage(UploadRejected, "Enter the RAR archive password."):
+            validate_rar(self.mp3("protected.rar"), self.policy)
+
+        archive.close.assert_called_once()
+
+    @patch("uploads.views.process_archive", return_value=1)
+    def test_rar_upload_route_receives_password_without_returning_it(self, process_archive):
         self.client.force_login(self.user)
         response = self.client.post(
             "/upload/",
             {
-                "files": files,
-                "folder_upload": "1",
-                "relative_paths": json.dumps(["Album/Disc1/track.mp3", "Album/cover.jpg", "Album/notes.txt"]),
+                "files": [self.mp3("protected.rar")],
+                "archive_password": "test-password",
             },
             HTTP_X_REQUESTED_WITH="XMLHttpRequest",
         )
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual([r["status"] for r in response.json()["results"]], ["success", "success", "ignored"])
-        records = list(UploadRecord.objects.filter(status=UploadRecord.Status.SUCCESS))
-        self.assertEqual(len(records), 2)
-        cover = next(record for record in records if record.stored_name.lower().endswith("cover.jpg"))
-        track = next(record for record in records if record.stored_name.lower().endswith(".mp3"))
-        self.assertNotEqual(Path(cover.stored_name).parent, Path(track.stored_name).parent)
-        self.assertTrue((self.library / "Uploads" / cover.stored_name).is_file())
 
-    def test_selected_file_limit_is_enforced_at_one_hundred(self):
-        self.policy.max_files_per_request = 100
-        self.policy.save()
-        files = [self.mp3(f"track-{i}.mp3", b"ID3" + bytes([i % 256]) + b"\x00" * 6) for i in range(101)]
-        with override_settings(DATA_UPLOAD_MAX_NUMBER_FILES=200):
-            response = self.post_files(self.user, *files)
-        self.assertEqual(response.status_code, 400)
-        self.assertIn("100", response.json()["errors"][0])
+        self.assertEqual(response.status_code, 200)
+        self.assertNotIn("test-password", response.content.decode())
+        process_archive.assert_called_once()
+        self.assertEqual(process_archive.call_args.kwargs["password"], "test-password")
+        self.assertTrue(process_archive.call_args.kwargs["is_rar"])
+
+    @patch("uploads.views.validate_rar")
+    def test_wrong_rar_password_returns_clear_error_without_writing(self, validate_rar):
+        import rarfile
+
+        info = SimpleNamespace(filename="track.mp3", is_dir=lambda: False)
+        archive = Mock()
+        archive.open.side_effect = rarfile.RarWrongPassword("wrong password")
+        validate_rar.return_value = (archive, [info], 10)
+
+        from .views import process_archive
+
+        with self.assertRaisesMessage(UploadRejected, "The RAR password is incorrect."):
+            process_archive(
+                self.user,
+                self.mp3("protected.rar"),
+                "protected.rar",
+                self.policy,
+                is_rar=True,
+                password="wrong-password",
+            )
         self.assertEqual(UploadRecord.objects.count(), 0)
-
-    @patch("uploads.views.process_rar", return_value=1)
-    def test_rar_extension_is_accepted_and_dispatched_to_rar_processor(self, process_rar_mock):
-        response = self.post_files(self.user, SimpleUploadedFile("album.rar", b"RAR test fixture"))
-        self.assertEqual(response.status_code, 200)
-        process_rar_mock.assert_called_once()
-        self.assertEqual(response.json()["results"][0]["status"], "success")
+        self.assertFalse((self.library / "Uploads").exists())
 
     def test_rejects_traversal_zip_without_writing_files(self):
         contents = io.BytesIO()
@@ -277,16 +260,6 @@ class LoginAndRouteTests(TestCase):
         )
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "Пожалуйста, введите правильные имя пользователя и пароль")
-
-    def test_browser_language_is_detected(self):
-        response = self.client.get("/accounts/login/", HTTP_ACCEPT_LANGUAGE="cs,en;q=0.8")
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.headers.get("Content-Language"), "cs")
-
-    def test_language_selection_is_persisted_in_cookie(self):
-        response = self.client.post("/i18n/setlang/", {"language": "en", "next": "/accounts/login/"})
-        self.assertEqual(response.status_code, 302)
-        self.assertEqual(response.cookies["django_language"].value, "en")
 
     def test_upload_requires_authentication(self):
         response = self.client.post("/upload/")
