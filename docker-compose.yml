@@ -17,6 +17,7 @@ services:
       DJANGO_DATABASE_PATH: /data/db.sqlite3
       UPLOAD_INCOMING_DIR: /incoming
       UPLOAD_LIBRARY_DIR: /music
+      TMPDIR: /incoming
     ports:
       - "4580:8000"
     volumes:
