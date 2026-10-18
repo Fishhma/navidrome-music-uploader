@@ -110,12 +110,14 @@ UPLOAD_INCOMING_DIR = Path(os.environ.get("UPLOAD_INCOMING_DIR", "/incoming"))
 UPLOAD_LIBRARY_DIR = Path(os.environ.get("UPLOAD_LIBRARY_DIR", "/music"))
 DATA_UPLOAD_MAX_MEMORY_SIZE = 524288
 FILE_UPLOAD_MAX_MEMORY_SIZE = 2097152
-DATA_UPLOAD_MAX_NUMBER_FILES = 25
+DATA_UPLOAD_MAX_NUMBER_FILES = 100
 FILE_UPLOAD_PERMISSIONS = 0o640
 FILE_UPLOAD_HANDLERS = [
     "uploads.upload_handlers.UploadRequestCapHandler",
     "django.core.files.uploadhandler.MemoryFileUploadHandler",
     "django.core.files.uploadhandler.TemporaryFileUploadHandler",
 ]
-MAX_UPLOAD_REQUEST_BYTES = 512 * 1024 * 1024
-MAX_UPLOAD_FILE_BYTES = 512 * 1024 * 1024
+MAX_UPLOAD_REQUEST_BYTES = 2 * 1024 * 1024 * 1024
+MAX_UPLOAD_FILE_BYTES = 1024 * 1024 * 1024
+# Store large streamed uploads on the persistent incoming volume, not the small /tmp tmpfs.
+FILE_UPLOAD_TEMP_DIR = str(UPLOAD_INCOMING_DIR)

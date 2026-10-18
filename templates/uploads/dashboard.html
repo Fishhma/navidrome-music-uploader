@@ -6,34 +6,53 @@
   <div><p class="eyebrow">{% trans "SHARED LIBRARY" %}</p><h1>{% trans "Upload music" %}</h1><p class="muted">{% trans "Files will appear in the shared Navidrome library after indexing." %}</p></div>
   <div class="quota-card"><span>{% trans "Used in the last 24 hours" %}</span><strong>{{ used|filesizeformat }} <small>/ {{ quota|filesizeformat }}</small></strong><div class="meter"><i style="width:{% if quota %}{% widthratio used quota 100 %}{% else %}0{% endif %}%"></i></div></div>
 </section>
-
 <section class="panel uploader">
-  <form id="upload-form" action="{% url 'upload' %}" method="post" enctype="multipart/form-data" data-uploading="{% trans 'Uploading files…' %}" data-transfer="{% trans 'Transferring files:' %}" data-upload-error="{% trans 'Upload error.' %}" data-response-error="{% trans 'Could not process the server response.' %}" data-network-error="{% trans 'Network error. Check your connection and refresh the page.' %}" data-aborted="{% trans 'Upload cancelled.' %}">
+  <form id="upload-form" action="{% url 'upload' %}" method="post" enctype="multipart/form-data"
+        data-uploading="{% trans 'Uploading files…' %}"
+        data-transfer="{% trans 'Transferring files:' %}"
+        data-upload-error="{% trans 'Upload error.' %}"
+        data-response-error="{% trans 'Could not process the server response.' %}"
+        data-network-error="{% trans 'Network error. Check your connection and refresh the page.' %}"
+        data-aborted="{% trans 'Upload cancelled.' %}"
+        data-password-prompt="{% trans 'This archive is password-protected. Enter its password:' %}"
+        data-password-invalid="{% trans 'Incorrect password. Try again.' %}"
+        data-password-cancelled="{% trans 'Password entry cancelled.' %}"
+        data-password-attempts="{% trans 'Too many incorrect password attempts.' %}">
     {% csrf_token %}
-    <input id="file-picker" type="file" name="files" multiple accept="audio/*,.zip,.rar" hidden>
+    <input id="file-picker" type="file" name="files" multiple accept="audio/*,image/*,.zip,.rar" hidden>
+    <input id="folder-picker" type="file" name="files" multiple webkitdirectory directory hidden>
     <button type="button" id="drop-zone" class="drop-zone">
       <span class="upload-icon">↑</span><strong>{% trans "Drop files here" %}</strong><span class="muted">{% trans "or click to choose files" %}</span>
-      <small>MP3, FLAC, WAV, OGG, Opus, M4A, AAC, AIFF, WMA · ZIP, RAR</small>
+      <small>MP3, FLAC, WAV, OGG, Opus, M4A, AAC, AIFF, WMA · JPG, PNG, WEBP · ZIP, RAR</small>
     </button>
+    <div class="upload-controls"><button type="button" id="folder-button" class="button">{% trans "Choose a folder" %}</button><span class="muted">{% blocktrans with max_size=policy.max_file_size|filesizeformat max_files=policy.max_files_per_request %}Up to {{ max_size }} per file · up to {{ max_files }} files at a time{% endblocktrans %}</span><button id="upload-button" class="button primary" type="submit" disabled>{% trans "Upload files" %}</button></div>
     <div id="selection" class="selection" hidden></div>
-    <div class="upload-controls"><span class="muted">{% blocktrans with max_size=policy.max_file_size|filesizeformat max_files=policy.max_files_per_request %}Up to {{ max_size }} per file · up to {{ max_files }} files at a time{% endblocktrans %}</span><button id="upload-button" class="button primary" type="submit" disabled>{% trans "Upload files" %}</button></div>
     <div id="progress-wrap" class="progress-wrap" hidden><div class="progress-track"><i id="progress-bar"></i></div><span id="progress-label">{% trans "Preparing…" %}</span></div>
   </form>
 </section>
-
 <section class="history-section">
   <div class="section-heading"><div><p class="eyebrow">{% trans "PERSONAL ACTIVITY" %}</p><h2>{% trans "Recent uploads" %}</h2></div><span class="muted">{% trans "Only you can see this history" %}</span></div>
   <div class="panel history-panel">
-    {% if records %}
-    <div class="history-list">{% for record in records %}
-      <article class="history-row">
-        <span class="file-icon {% if record.status == 'success' %}ok{% else %}bad{% endif %}">{% if record.status == 'success' %}♫{% else %}!{% endif %}</span>
+    {% if records %}<div class="history-list">{% for record in records %}
+      <article class="history-row"><span class="file-icon {% if record.status == 'success' %}ok{% else %}bad{% endif %}">{% if record.status == 'success' %}♫{% else %}!{% endif %}</span>
         <div class="record-main"><strong title="{{ record.original_name }}">{{ record.original_name }}</strong><span class="muted">{{ record.uploaded_at|date:"d.m.Y H:i" }} · {{ record.size|filesizeformat }}{% if record.message %} · {{ record.message }}{% endif %}</span></div>
         <span class="status {% if record.status == 'success' %}success{% else %}failed{% endif %}">{% if record.status == 'success' %}{% trans "Done" %}{% else %}{% trans "Failed" %}{% endif %}</span>
       </article>
-    {% endfor %}</div>
-    {% else %}<div class="empty-state"><span>♫</span><strong>{% trans "No uploads yet" %}</strong><p class="muted">{% trans "Selected files and their processing status will appear here." %}</p></div>{% endif %}
+    {% endfor %}</div>{% else %}<div class="empty-state"><span>♫</span><strong>{% trans "No uploads yet" %}</strong><p class="muted">{% trans "Selected files and their processing status will appear here." %}</p></div>{% endif %}
   </div>
 </section>
+<dialog id="archive-password-dialog" class="password-dialog" aria-labelledby="archive-password-title">
+  <div class="password-dialog-body">
+    <h2 id="archive-password-title">{% trans "Archive password" %}</h2>
+    <p id="archive-password-message">{% trans "This archive is password-protected. Enter its password:" %}</p>
+    <label for="archive-password-input">{% trans "Password" %}</label>
+    <input id="archive-password-input" type="password" autocomplete="current-password">
+    <div class="password-dialog-actions">
+      <button type="button" id="archive-password-cancel" class="button">{% trans "Cancel" %}</button>
+      <button type="button" id="archive-password-submit" class="button primary">{% trans "Continue" %}</button>
+    </div>
+  </div>
+</dialog>
 {% endblock %}
+
 {% block scripts %}<script src="{% static 'js/upload.js' %}" defer></script>{% endblock %}

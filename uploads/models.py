@@ -4,12 +4,12 @@ from django.utils import timezone
 
 
 class UploadPolicy(models.Model):
-    max_file_size = models.PositiveBigIntegerField(default=100 * 1024 * 1024, help_text="Maximum size of one uploaded file in bytes.")
-    max_files_per_request = models.PositiveSmallIntegerField(default=20)
+    max_file_size = models.PositiveBigIntegerField(default=1024 * 1024 * 1024, help_text="Maximum size of one uploaded file or archive in bytes.")
+    max_files_per_request = models.PositiveSmallIntegerField(default=100, help_text="Maximum number of selected files per request or file entries per archive.")
     daily_quota = models.PositiveBigIntegerField(default=1024 * 1024 * 1024, help_text="Default quota per user in a rolling 24-hour period, in bytes.")
-    max_archive_entries = models.PositiveSmallIntegerField(default=100)
-    max_archive_expanded_size = models.PositiveBigIntegerField(default=1024 * 1024 * 1024, help_text="Maximum total uncompressed size per ZIP archive, in bytes.")
-    max_archive_ratio = models.PositiveSmallIntegerField(default=100, help_text="Maximum ZIP member expansion ratio.")
+    max_archive_entries = models.PositiveSmallIntegerField(default=100, help_text="Maximum number of file entries per archive, including non-media files. Directory entries are not counted.")
+    max_archive_expanded_size = models.PositiveBigIntegerField(default=4 * 1024 * 1024 * 1024, help_text="Maximum total uncompressed size per archive, in bytes.")
+    max_archive_ratio = models.PositiveSmallIntegerField(default=100, help_text="Maximum archive member expansion ratio.")
 
     class Meta:
         verbose_name = "upload policy"

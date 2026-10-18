@@ -204,3 +204,151 @@ msgstr "%(name)s: soubor překračuje nastavený limit velikosti."
 
 msgid "%(name)s: this audio file has already been uploaded."
 msgstr "%(name)s: tento zvukový soubor už byl nahrán."
+
+
+msgid "Choose a folder"
+msgstr "Vybrat složku"
+
+
+msgid "This archive is password-protected. Enter its password:"
+msgstr "Tento archiv je chráněný heslem. Zadejte heslo:"
+
+
+msgid "Incorrect password. Try again."
+msgstr "Nesprávné heslo. Zkuste to znovu."
+
+
+msgid "Password entry cancelled."
+msgstr "Zadávání hesla bylo zrušeno."
+
+
+msgid "Too many incorrect password attempts."
+msgstr "Příliš mnoho nesprávných pokusů o zadání hesla."
+
+
+msgid "The supplied folder path is unsafe."
+msgstr "Zadaná cesta ke složce není bezpečná."
+
+
+msgid "Unsupported image format."
+msgstr "Nepodporovaný formát obrázku."
+
+
+msgid "The file contents do not match a supported image format."
+msgstr "Obsah souboru neodpovídá podporovanému formátu obrázku."
+
+
+msgid "The ZIP archive contains too many files."
+msgstr "Archiv ZIP obsahuje příliš mnoho souborů."
+
+
+msgid "The ZIP archive contains no supported audio files or cover images."
+msgstr "Archiv ZIP neobsahuje podporované zvukové soubory ani obrázky obalů."
+
+
+msgid "The ZIP archive is invalid or cannot be read."
+msgstr "Archiv ZIP je neplatný nebo jej nelze přečíst."
+
+
+msgid "The RAR archive contains too many files."
+msgstr "Archiv RAR obsahuje příliš mnoho souborů."
+
+
+msgid "This RAR archive is password-protected."
+msgstr "Tento archiv RAR je chráněný heslem."
+
+
+msgid "The RAR password is incorrect."
+msgstr "Heslo k archivu RAR není správné."
+
+
+msgid "This ZIP archive is password-protected."
+msgstr "Tento archiv ZIP je chráněný heslem."
+
+
+msgid "The ZIP password is incorrect or the archive is damaged."
+msgstr "Heslo k ZIP archivu není správné nebo je archiv poškozený."
+
+
+msgid "The archive contains an unreadable media file."
+msgstr "Archiv obsahuje nečitelný mediální soubor."
+
+
+msgid "The archive expands beyond the configured size limit."
+msgstr "Archiv po rozbalení překračuje nastavený limit velikosti."
+
+
+msgid "%(name)s: this file has already been uploaded."
+msgstr "%(name)s: tento soubor už byl nahrán."
+
+
+msgid "The destination path is unsafe."
+msgstr "Cílová cesta není bezpečná."
+
+
+msgid "This file has already been uploaded."
+msgstr "Tento soubor už byl nahrán."
+
+
+msgid "Added cover image to the shared music library."
+msgstr "Obrázek obalu byl přidán do sdílené hudební knihovny."
+
+
+msgid "Extracted media and cover art from archive."
+msgstr "Mediální soubor a obrázek obalu byly rozbaleny z archivu."
+
+
+msgid "Extracted from archive and added to the shared music library."
+msgstr "Rozbaleno z archivu a přidáno do sdílené hudební knihovny."
+
+
+msgid "Added %(count)s media file(s) from the %(kind)s archive."
+msgstr "Počet mediálních souborů přidaných z archivu %(kind)s: %(count)s."
+
+
+msgid "Select one folder at a time."
+msgstr "Vybírejte vždy pouze jednu složku."
+
+
+msgid "The selected folder paths are invalid."
+msgstr "Cesty vybrané složky jsou neplatné."
+
+
+msgid "Nested archives are not unpacked from folder uploads."
+msgstr "Vnořené archivy se při nahrávání složky nerozbalují."
+
+
+msgid "Ignored unsupported non-media file."
+msgstr "Nepodporovaný soubor mimo média byl přeskočen."
+
+
+msgid "The archive password is incorrect or required."
+msgstr "Heslo archivu je nesprávné nebo je vyžadováno."
+
+
+msgid "A file with the same name already exists in this folder."
+msgstr "V této složce už existuje soubor se stejným názvem."
+
+
+msgid "Archive password"
+msgstr "Heslo archivu"
+
+
+msgid "Cancel"
+msgstr "Zrušit"
+
+
+msgid "Continue"
+msgstr "Pokračovat"
+
+
+msgid "The archive contains an unsafe path or link."
+msgstr "Archiv obsahuje nebezpečnou cestu nebo odkaz."
+
+
+msgid "The RAR archive contains no supported audio files or cover images."
+msgstr "Archiv RAR neobsahuje podporované zvukové soubory ani obrázky obalů."
+
+
+msgid "The archive password is incorrect or the archive is damaged."
+msgstr "Heslo archivu není správné nebo je archiv poškozený."

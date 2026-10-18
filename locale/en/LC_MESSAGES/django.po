@@ -204,3 +204,151 @@ msgstr "%(name)s: file exceeds the configured per-file size limit."
 
 msgid "%(name)s: this audio file has already been uploaded."
 msgstr "%(name)s: this audio file has already been uploaded."
+
+
+msgid "Choose a folder"
+msgstr "Choose a folder"
+
+
+msgid "This archive is password-protected. Enter its password:"
+msgstr "This archive is password-protected. Enter its password:"
+
+
+msgid "Incorrect password. Try again."
+msgstr "Incorrect password. Try again."
+
+
+msgid "Password entry cancelled."
+msgstr "Password entry cancelled."
+
+
+msgid "Too many incorrect password attempts."
+msgstr "Too many incorrect password attempts."
+
+
+msgid "The supplied folder path is unsafe."
+msgstr "The supplied folder path is unsafe."
+
+
+msgid "Unsupported image format."
+msgstr "Unsupported image format."
+
+
+msgid "The file contents do not match a supported image format."
+msgstr "The file contents do not match a supported image format."
+
+
+msgid "The ZIP archive contains too many files."
+msgstr "The ZIP archive contains too many files."
+
+
+msgid "The ZIP archive contains no supported audio files or cover images."
+msgstr "The ZIP archive contains no supported audio files or cover images."
+
+
+msgid "The ZIP archive is invalid or cannot be read."
+msgstr "The ZIP archive is invalid or cannot be read."
+
+
+msgid "The RAR archive contains too many files."
+msgstr "The RAR archive contains too many files."
+
+
+msgid "This RAR archive is password-protected."
+msgstr "This RAR archive is password-protected."
+
+
+msgid "The RAR password is incorrect."
+msgstr "The RAR password is incorrect."
+
+
+msgid "This ZIP archive is password-protected."
+msgstr "This ZIP archive is password-protected."
+
+
+msgid "The ZIP password is incorrect or the archive is damaged."
+msgstr "The ZIP password is incorrect or the archive is damaged."
+
+
+msgid "The archive contains an unreadable media file."
+msgstr "The archive contains an unreadable media file."
+
+
+msgid "The archive expands beyond the configured size limit."
+msgstr "The archive expands beyond the configured size limit."
+
+
+msgid "%(name)s: this file has already been uploaded."
+msgstr "%(name)s: this file has already been uploaded."
+
+
+msgid "The destination path is unsafe."
+msgstr "The destination path is unsafe."
+
+
+msgid "This file has already been uploaded."
+msgstr "This file has already been uploaded."
+
+
+msgid "Added cover image to the shared music library."
+msgstr "Added cover image to the shared music library."
+
+
+msgid "Extracted media and cover art from archive."
+msgstr "Extracted media and cover art from archive."
+
+
+msgid "Extracted from archive and added to the shared music library."
+msgstr "Extracted from archive and added to the shared music library."
+
+
+msgid "Added %(count)s media file(s) from the %(kind)s archive."
+msgstr "Added %(count)s media file(s) from the %(kind)s archive."
+
+
+msgid "Select one folder at a time."
+msgstr "Select one folder at a time."
+
+
+msgid "The selected folder paths are invalid."
+msgstr "The selected folder paths are invalid."
+
+
+msgid "Nested archives are not unpacked from folder uploads."
+msgstr "Nested archives are not unpacked from folder uploads."
+
+
+msgid "Ignored unsupported non-media file."
+msgstr "Ignored unsupported non-media file."
+
+
+msgid "The archive password is incorrect or required."
+msgstr "The archive password is incorrect or required."
+
+
+msgid "A file with the same name already exists in this folder."
+msgstr "A file with the same name already exists in this folder."
+
+
+msgid "Archive password"
+msgstr "Archive password"
+
+
+msgid "Cancel"
+msgstr "Cancel"
+
+
+msgid "Continue"
+msgstr "Continue"
+
+
+msgid "The archive contains an unsafe path or link."
+msgstr "The archive contains an unsafe path or link."
+
+
+msgid "The RAR archive contains no supported audio files or cover images."
+msgstr "The RAR archive contains no supported audio files or cover images."
+
+
+msgid "The archive password is incorrect or the archive is damaged."
+msgstr "The archive password is incorrect or the archive is damaged."

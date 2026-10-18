@@ -204,3 +204,151 @@ msgstr "%(name)s: файл превышает установленный лим�
 
 msgid "%(name)s: this audio file has already been uploaded."
 msgstr "%(name)s: этот аудиофайл уже загружен."
+
+
+msgid "Choose a folder"
+msgstr "Выбрать папку"
+
+
+msgid "This archive is password-protected. Enter its password:"
+msgstr "Этот архив защищён паролем. Введите пароль:"
+
+
+msgid "Incorrect password. Try again."
+msgstr "Неверный пароль. Попробуйте ещё раз."
+
+
+msgid "Password entry cancelled."
+msgstr "Ввод пароля отменён."
+
+
+msgid "Too many incorrect password attempts."
+msgstr "Слишком много неверных попыток ввода пароля."
+
+
+msgid "The supplied folder path is unsafe."
+msgstr "Указан небезопасный путь к папке."
+
+
+msgid "Unsupported image format."
+msgstr "Неподдерживаемый формат изображения."
+
+
+msgid "The file contents do not match a supported image format."
+msgstr "Содержимое файла не соответствует поддерживаемому формату изображения."
+
+
+msgid "The ZIP archive contains too many files."
+msgstr "ZIP-архив содержит слишком много файлов."
+
+
+msgid "The ZIP archive contains no supported audio files or cover images."
+msgstr "ZIP-архив не содержит поддерживаемых аудиофайлов или изображений обложек."
+
+
+msgid "The ZIP archive is invalid or cannot be read."
+msgstr "ZIP-архив повреждён или его не удалось прочитать."
+
+
+msgid "The RAR archive contains too many files."
+msgstr "RAR-архив содержит слишком много файлов."
+
+
+msgid "This RAR archive is password-protected."
+msgstr "Этот RAR-архив защищён паролем."
+
+
+msgid "The RAR password is incorrect."
+msgstr "Неверный пароль RAR-архива."
+
+
+msgid "This ZIP archive is password-protected."
+msgstr "Этот ZIP-архив защищён паролем."
+
+
+msgid "The ZIP password is incorrect or the archive is damaged."
+msgstr "Неверный пароль ZIP-архива или архив повреждён."
+
+
+msgid "The archive contains an unreadable media file."
+msgstr "В архиве есть нечитаемый медиафайл."
+
+
+msgid "The archive expands beyond the configured size limit."
+msgstr "Размер архива после распаковки превышает установленный лимит."
+
+
+msgid "%(name)s: this file has already been uploaded."
+msgstr "%(name)s: этот файл уже загружен."
+
+
+msgid "The destination path is unsafe."
+msgstr "Небезопасный путь назначения."
+
+
+msgid "This file has already been uploaded."
+msgstr "Этот файл уже загружен."
+
+
+msgid "Added cover image to the shared music library."
+msgstr "Изображение обложки добавлено в общую музыкальную библиотеку."
+
+
+msgid "Extracted media and cover art from archive."
+msgstr "Медиафайл и обложка извлечены из архива."
+
+
+msgid "Extracted from archive and added to the shared music library."
+msgstr "Извлечено из архива и добавлено в общую музыкальную библиотеку."
+
+
+msgid "Added %(count)s media file(s) from the %(kind)s archive."
+msgstr "Добавлено медиафайлов из архива %(kind)s: %(count)s."
+
+
+msgid "Select one folder at a time."
+msgstr "Выбирайте только одну папку за раз."
+
+
+msgid "The selected folder paths are invalid."
+msgstr "Пути выбранной папки некорректны."
+
+
+msgid "Nested archives are not unpacked from folder uploads."
+msgstr "Вложенные архивы при загрузке папки не распаковываются."
+
+
+msgid "Ignored unsupported non-media file."
+msgstr "Неподдерживаемый файл не относится к медиа и пропущен."
+
+
+msgid "The archive password is incorrect or required."
+msgstr "Пароль архива неверен или требуется пароль."
+
+
+msgid "A file with the same name already exists in this folder."
+msgstr "В этой папке уже существует файл с таким именем."
+
+
+msgid "Archive password"
+msgstr "Пароль архива"
+
+
+msgid "Cancel"
+msgstr "Отмена"
+
+
+msgid "Continue"
+msgstr "Продолжить"
+
+
+msgid "The archive contains an unsafe path or link."
+msgstr "Архив содержит небезопасный путь или ссылку."
+
+
+msgid "The RAR archive contains no supported audio files or cover images."
+msgstr "RAR-архив не содержит поддерживаемых аудиофайлов или изображений обложек."
+
+
+msgid "The archive password is incorrect or the archive is damaged."
+msgstr "Неверный пароль архива или архив повреждён."
