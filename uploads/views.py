@@ -128,6 +128,8 @@ def process_archive(user, uploaded_file, original_name, policy, is_rar=False, pa
     )
     staged = []
     stored_files = []
+    current_archive_member = None
+    completed = False
     try:
         with tempfile.TemporaryDirectory(dir=incoming_directory()) as stage_dir:
             actual_audio_size = 0
@@ -135,6 +137,7 @@ def process_archive(user, uploaded_file, original_name, policy, is_rar=False, pa
                 member_name = PurePosixPath(info.filename.replace("\\", "/")).name
                 if not member_name:
                     continue
+                current_archive_member = member_name
                 stage_path = os.path.join(stage_dir, str(index))
                 digest_obj = hashlib.sha256()
                 member_size = 0
@@ -179,6 +182,7 @@ def process_archive(user, uploaded_file, original_name, policy, is_rar=False, pa
                         status=UploadRecord.Status.SUCCESS,
                         message=f"Extracted from {'RAR' if is_rar else 'ZIP'} and added to the shared music library.",
                     )
+        completed = True
     except rarfile.PasswordRequired as exc:
         raise UploadRejected("Enter the RAR archive password.") from exc
     except rarfile.RarWrongPassword as exc:
@@ -189,12 +193,24 @@ def process_archive(user, uploaded_file, original_name, policy, is_rar=False, pa
         raise UploadRejected("The RAR archive is damaged or the password is incorrect.") from exc
     except (rarfile.Error, zipfile.BadZipFile, RuntimeError) as exc:
         archive_type = "RAR" if is_rar else "ZIP"
-        raise UploadRejected(f"The {archive_type} archive contains an unreadable audio file.") from exc
+        logger.warning(
+            "%s extraction failed for member %r: %s: %s",
+            archive_type, current_archive_member, type(exc).__name__, exc,
+            exc_info=True,
+        )
+        member = safe_basename(current_archive_member) if current_archive_member else "unknown file"
+        raise UploadRejected(
+            f"The {archive_type} archive could not extract {member}. "
+            "Check server logs for the underlying extraction error."
+        ) from exc
     except Exception:
         for stored_name in stored_files:
             (settings.UPLOAD_LIBRARY_DIR / "Uploads" / stored_name).unlink(missing_ok=True)
         raise
     finally:
+        if not completed:
+            for stored_name in stored_files:
+                (settings.UPLOAD_LIBRARY_DIR / "Uploads" / stored_name).unlink(missing_ok=True)
         archive.close()
     return len(stored_files)
 

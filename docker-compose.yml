@@ -21,8 +21,8 @@ services:
     ports:
       - "4580:8000"
     volumes:
-      - uploader_data:/data
-      - uploader_incoming:/incoming
+      - ./data:/data
+      - ./incoming:/incoming
       - /home/marian/navidrome/music:/music
     read_only: true
     tmpfs:
@@ -39,7 +39,3 @@ services:
       timeout: 5s
       retries: 3
       start_period: 30s
-
-volumes:
-  uploader_data:
-  uploader_incoming:
