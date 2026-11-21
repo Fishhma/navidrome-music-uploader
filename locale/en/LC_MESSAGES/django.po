@@ -41,6 +41,36 @@ msgstr "Password"
 msgid "Used in the last 24 hours"
 msgstr "Used in the last 24 hours"
 
+#, python-format
+msgid "%(count)s track added"
+msgid_plural "%(count)s tracks added"
+msgstr[0] "%(count)s track added"
+msgstr[1] "%(count)s tracks added"
+
+#, python-format
+msgid "%(count)s duplicate"
+msgid_plural "%(count)s duplicates"
+msgstr[0] "%(count)s duplicate"
+msgstr[1] "%(count)s duplicates"
+
+#, python-format
+msgid "%(count)s failed"
+msgid_plural "%(count)s failed"
+msgstr[0] "%(count)s failed"
+msgstr[1] "%(count)s failed"
+
+#, python-format
+msgid "%(count)s removed from the library"
+msgid_plural "%(count)s removed from the library"
+msgstr[0] "%(count)s removed from the library"
+msgstr[1] "%(count)s removed from the library"
+
+#, python-format
+msgid "%(count)s file"
+msgid_plural "%(count)s files"
+msgstr[0] "%(count)s file"
+msgstr[1] "%(count)s files"
+
 msgid "No uploads yet"
 msgstr "No uploads yet"
 
@@ -86,6 +116,15 @@ msgstr "Recent uploads"
 
 msgid "Only you can see this history"
 msgstr "Only you can see this history"
+
+#, python-format
+msgid "The 24-hour upload usage was reset for %(count)d user."
+msgid_plural "The 24-hour upload usage was reset for %(count)d users."
+msgstr[0] "The 24-hour upload usage was reset for %(count)d user."
+msgstr[1] "The 24-hour upload usage was reset for %(count)d users."
+
+msgid "Reset the 24-hour upload usage"
+msgstr "Reset the 24-hour upload usage"
 
 #, python-format
 msgid "The %(type)s archive contains too many files."
@@ -157,14 +196,32 @@ msgstr "RAR extraction is unavailable on the server."
 msgid "The RAR archive could not extract %(name)s."
 msgstr "The RAR archive could not extract %(name)s."
 
+msgid "Archive"
+msgstr "Archive"
+
+msgid "Folder"
+msgstr "Folder"
+
+msgid "File"
+msgstr "File"
+
 msgid "Done"
 msgstr "Done"
+
+msgid "Partly added"
+msgstr "Partly added"
 
 msgid "Duplicate"
 msgstr "Duplicate"
 
 msgid "Failed"
 msgstr "Failed"
+
+msgid "upload history entry"
+msgstr "upload history entry"
+
+msgid "upload history"
+msgstr "upload history"
 
 msgid "Removed"
 msgstr "Removed"
@@ -295,9 +352,6 @@ msgstr "Details"
 
 msgid "Navidrome library scan started."
 msgstr "Navidrome library scan started."
-
-msgid "Partly added"
-msgstr "Partly added"
 
 msgid "Select at least one file."
 msgstr "Select at least one file."

@@ -41,6 +41,41 @@ msgstr "Пароль"
 msgid "Used in the last 24 hours"
 msgstr "Использовано за 24 часа"
 
+#, python-format
+msgid "%(count)s track added"
+msgid_plural "%(count)s tracks added"
+msgstr[0] "%(count)s трек добавлен"
+msgstr[1] "%(count)s трека добавлено"
+msgstr[2] "%(count)s треков добавлено"
+
+#, python-format
+msgid "%(count)s duplicate"
+msgid_plural "%(count)s duplicates"
+msgstr[0] "%(count)s повтор"
+msgstr[1] "%(count)s повтора"
+msgstr[2] "%(count)s повторов"
+
+#, python-format
+msgid "%(count)s failed"
+msgid_plural "%(count)s failed"
+msgstr[0] "%(count)s ошибка"
+msgstr[1] "%(count)s ошибки"
+msgstr[2] "%(count)s ошибок"
+
+#, python-format
+msgid "%(count)s removed from the library"
+msgid_plural "%(count)s removed from the library"
+msgstr[0] "%(count)s удалён из библиотеки"
+msgstr[1] "%(count)s удалено из библиотеки"
+msgstr[2] "%(count)s удалено из библиотеки"
+
+#, python-format
+msgid "%(count)s file"
+msgid_plural "%(count)s files"
+msgstr[0] "%(count)s файл"
+msgstr[1] "%(count)s файла"
+msgstr[2] "%(count)s файлов"
+
 msgid "No uploads yet"
 msgstr "Загрузок пока нет"
 
@@ -86,6 +121,16 @@ msgstr "Последние загрузки"
 
 msgid "Only you can see this history"
 msgstr "История видна только вам"
+
+#, python-format
+msgid "The 24-hour upload usage was reset for %(count)d user."
+msgid_plural "The 24-hour upload usage was reset for %(count)d users."
+msgstr[0] "Суточный лимит загрузок сброшен для %(count)d пользователя."
+msgstr[1] "Суточный лимит загрузок сброшен для %(count)d пользователей."
+msgstr[2] "Суточный лимит загрузок сброшен для %(count)d пользователей."
+
+msgid "Reset the 24-hour upload usage"
+msgstr "Сбросить суточный лимит загрузок"
 
 #, python-format
 msgid "The %(type)s archive contains too many files."
@@ -157,14 +202,32 @@ msgstr "Распаковка RAR недоступна на сервере."
 msgid "The RAR archive could not extract %(name)s."
 msgstr "Не удалось извлечь %(name)s из RAR-архива."
 
+msgid "Archive"
+msgstr "Архив"
+
+msgid "Folder"
+msgstr "Папка"
+
+msgid "File"
+msgstr "Файл"
+
 msgid "Done"
 msgstr "Готово"
+
+msgid "Partly added"
+msgstr "Частично"
 
 msgid "Duplicate"
 msgstr "Повтор"
 
 msgid "Failed"
 msgstr "Ошибка"
+
+msgid "upload history entry"
+msgstr "запись истории загрузок"
+
+msgid "upload history"
+msgstr "история загрузок"
 
 msgid "Removed"
 msgstr "Удалён"
@@ -299,9 +362,6 @@ msgstr "Подробнее"
 
 msgid "Navidrome library scan started."
 msgstr "Запущено сканирование библиотеки Navidrome."
-
-msgid "Partly added"
-msgstr "Частично"
 
 msgid "Select at least one file."
 msgstr "Выберите хотя бы один файл."

@@ -4,7 +4,7 @@ Standalone Django web app for authenticated uploads into an **existing** Navidro
 
 ## Features
 
-- Separate Django accounts, password hashing, CSRF-protected login/logout, and per-user upload history.
+- Separate Django accounts, password hashing, CSRF-protected login/logout, and per-user upload history. The history shows one line per archive (or per library folder for loose tracks uploaded together) with the number of added, duplicate and rejected tracks; the individual tracks are listed under a collapsible line.
 - Django Admin user enable/disable, global upload policy, optional per-user rolling 24-hour quota, and full upload history.
 - Multi-file selection, drag-and-drop, transfer progress, a server-processing indicator, and a per-file result list (added / partly added / duplicate / failed) that stays on screen.
 - Content-signature checks for MP3, FLAC, WAV, OGG/Opus, M4A/M4B, AAC, AIFF, and WMA. ZIP and RAR archives are supported. Password-protected RAR (RAR4 and RAR5, including encrypted headers) and legacy ZipCrypto ZIP archives accept a password in the upload form; AES-encrypted ZIP is not supported.
@@ -60,7 +60,7 @@ The user must be a Navidrome administrator for the scan to start. If Navidrome i
 
 ## Limits and operational notes
 
-- Defaults for new installations: 1 GiB per upload, 100 selected files per request, 1 GiB per user in a rolling 24 hours, 300 archive files, 4 GiB expanded size, and maximum 100:1 expansion ratio. Administrators may change policy values in Django Admin. Per-user quota overrides are managed under **User upload limits**.
+- Defaults for new installations: 1 GiB per upload, 100 selected files per request, 1 GiB per user in a rolling 24 hours, 300 archive files, 4 GiB expanded size, and maximum 100:1 expansion ratio. Administrators may change policy values in Django Admin. Per-user quota overrides are managed under **User upload limits**. To let someone upload again before the 24 hours have passed, select them under **Users** (or **User upload limits**) and run the action **Reset the 24-hour upload usage**; the upload history and duplicate detection are not affected.
 - Archive extraction keeps only regular audio files and images (jpg, png, webp, gif up to 50 MiB). Unsafe paths reject the archive; links and other files are ignored. Invalid audio files inside an archive are skipped and reported.
 - RAR archives are extracted with the official `unrar` (Debian non-free), installed in the Docker image. `unar` is not used: it cannot decrypt some password-protected RAR4 archives (for example albums stored without compression) and fails with a checksum error. Multi-volume RAR archives, nested archives and transcoding are not supported.
 - Gunicorn runs threaded workers with a 15-minute timeout so large uploads over a slow network are not cut off.

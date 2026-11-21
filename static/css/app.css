@@ -769,3 +769,35 @@ button:disabled { opacity: 0.8; }
 .result-row li.duplicate { color: var(--warning); }
 .result-row li.failed { color: var(--danger); }
 .scan-note { font-size: 12px; }
+
+/* Grouped upload history: archives and folders with a collapsible track list */
+.file-icon.archive { font-size: 10px; font-weight: 750; letter-spacing: 0.04em; }
+.history-row:has(details[open]) { align-items: flex-start; }
+.track-list { margin-top: 2px; font-size: 11px; }
+.track-list summary {
+  width: max-content;
+  color: var(--muted);
+  cursor: pointer;
+  user-select: none;
+}
+.track-list summary:hover { color: var(--text); }
+.track-list ul {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin: 8px 0 2px;
+  padding: 0 0 0 12px;
+  border-left: 1px solid var(--line);
+  list-style: none;
+}
+.track-list li { display: flex; min-width: 0; flex-direction: column; gap: 1px; color: var(--text); }
+.track-list li span,
+.track-list li small { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.track-list li small { color: var(--muted); }
+.track-list li.duplicate small,
+.track-list li.removed small { color: var(--warning); }
+.track-list li.failed small { color: var(--danger); }
+@media (max-width: 640px) {
+  .track-list li span,
+  .track-list li small { white-space: normal; }
+}

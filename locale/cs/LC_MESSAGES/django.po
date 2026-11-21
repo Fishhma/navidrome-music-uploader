@@ -41,6 +41,41 @@ msgstr "Heslo"
 msgid "Used in the last 24 hours"
 msgstr "Využito za posledních 24 hodin"
 
+#, python-format
+msgid "%(count)s track added"
+msgid_plural "%(count)s tracks added"
+msgstr[0] "%(count)s skladba přidána"
+msgstr[1] "%(count)s skladby přidány"
+msgstr[2] "%(count)s skladeb přidáno"
+
+#, python-format
+msgid "%(count)s duplicate"
+msgid_plural "%(count)s duplicates"
+msgstr[0] "%(count)s duplikát"
+msgstr[1] "%(count)s duplikáty"
+msgstr[2] "%(count)s duplikátů"
+
+#, python-format
+msgid "%(count)s failed"
+msgid_plural "%(count)s failed"
+msgstr[0] "%(count)s chyba"
+msgstr[1] "%(count)s chyby"
+msgstr[2] "%(count)s chyb"
+
+#, python-format
+msgid "%(count)s removed from the library"
+msgid_plural "%(count)s removed from the library"
+msgstr[0] "%(count)s odstraněna z knihovny"
+msgstr[1] "%(count)s odstraněny z knihovny"
+msgstr[2] "%(count)s odstraněno z knihovny"
+
+#, python-format
+msgid "%(count)s file"
+msgid_plural "%(count)s files"
+msgstr[0] "%(count)s soubor"
+msgstr[1] "%(count)s soubory"
+msgstr[2] "%(count)s souborů"
+
 msgid "No uploads yet"
 msgstr "Zatím žádná nahrávání"
 
@@ -86,6 +121,16 @@ msgstr "Poslední nahrané soubory"
 
 msgid "Only you can see this history"
 msgstr "Tuto historii vidíte pouze vy"
+
+#, python-format
+msgid "The 24-hour upload usage was reset for %(count)d user."
+msgid_plural "The 24-hour upload usage was reset for %(count)d users."
+msgstr[0] "Využití nahrávání za 24 hodin bylo vynulováno pro %(count)d uživatele."
+msgstr[1] "Využití nahrávání za 24 hodin bylo vynulováno pro %(count)d uživatele."
+msgstr[2] "Využití nahrávání za 24 hodin bylo vynulováno pro %(count)d uživatelů."
+
+msgid "Reset the 24-hour upload usage"
+msgstr "Vynulovat využití nahrávání za 24 hodin"
 
 #, python-format
 msgid "The %(type)s archive contains too many files."
@@ -157,14 +202,32 @@ msgstr "Rozbalování RAR není na serveru dostupné."
 msgid "The RAR archive could not extract %(name)s."
 msgstr "Z archivu RAR se nepodařilo rozbalit %(name)s."
 
+msgid "Archive"
+msgstr "Archiv"
+
+msgid "Folder"
+msgstr "Složka"
+
+msgid "File"
+msgstr "Soubor"
+
 msgid "Done"
 msgstr "Hotovo"
+
+msgid "Partly added"
+msgstr "Částečně"
 
 msgid "Duplicate"
 msgstr "Duplikát"
 
 msgid "Failed"
 msgstr "Chyba"
+
+msgid "upload history entry"
+msgstr "záznam historie nahrávání"
+
+msgid "upload history"
+msgstr "historie nahrávání"
 
 msgid "Removed"
 msgstr "Odstraněno"
@@ -299,9 +362,6 @@ msgstr "Podrobnosti"
 
 msgid "Navidrome library scan started."
 msgstr "Spuštěno prohledání knihovny Navidrome."
-
-msgid "Partly added"
-msgstr "Částečně"
 
 msgid "Select at least one file."
 msgstr "Vyberte alespoň jeden soubor."

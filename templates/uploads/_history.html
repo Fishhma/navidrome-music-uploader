@@ -1,11 +1,17 @@
 {% load i18n %}<div class="quota-card" id="quota-card" hidden><span>{% trans "Used in the last 24 hours" %}</span><strong>{{ used|filesizeformat }} <small>/ {{ quota|filesizeformat }}</small></strong><div class="meter"><i style="width:{{ used_percent }}%"></i></div></div>
 <div class="panel history-panel">
-  {% if records %}
-  <div class="history-list">{% for record in records %}
+  {% if uploads %}
+  <div class="history-list">{% for upload in uploads %}
     <article class="history-row">
-      <span class="file-icon {% if record.status == 'success' %}ok{% elif record.status == 'duplicate' or record.status == 'removed' %}warn{% else %}bad{% endif %}">{% if record.status == 'success' %}♫{% elif record.status == 'duplicate' %}⧉{% elif record.status == 'removed' %}–{% else %}!{% endif %}</span>
-      <div class="record-main"><strong title="{{ record.original_name }}">{{ record.original_name }}</strong><span class="muted" title="{{ record.message }}">{{ record.uploaded_at|date:"d.m.Y H:i" }} · {{ record.size|filesizeformat }}{% if record.stored_name and record.status == 'success' %} · Uploads/{{ record.stored_name }}{% elif record.message %} · {{ record.message }}{% endif %}</span></div>
-      <span class="status {{ record.status }}">{{ record.get_status_display }}</span>
+      <span class="file-icon {% if upload.status == 'success' %}ok{% elif upload.status == 'failed' %}bad{% else %}warn{% endif %}{% if upload.kind == 'archive' %} archive{% endif %}">{% if upload.kind == 'archive' %}{{ upload.name|slice:"-3:"|upper }}{% elif upload.kind == 'folder' %}▤{% elif upload.status == 'duplicate' %}⧉{% elif upload.status == 'failed' %}!{% else %}♫{% endif %}</span>
+      <div class="record-main">
+        <strong title="{{ upload.name }}">{{ upload.name }}</strong>
+        <span class="muted">{{ upload.uploaded_at|date:"d.m.Y H:i" }} · {{ upload.size|filesizeformat }}{% if upload.added %} · {% blocktrans count count=upload.added %}{{ count }} track added{% plural %}{{ count }} tracks added{% endblocktrans %}{% if upload.folder_list %} → {{ upload.folder_list|join:", " }}{% endif %}{% elif upload.message %} · {{ upload.message }}{% endif %}{% if upload.duplicates and upload.added or upload.duplicates and not upload.message %} · {% blocktrans count count=upload.duplicates %}{{ count }} duplicate{% plural %}{{ count }} duplicates{% endblocktrans %}{% endif %}{% if upload.failed and upload.added or upload.failed and not upload.message %} · {% blocktrans count count=upload.failed %}{{ count }} failed{% plural %}{{ count }} failed{% endblocktrans %}{% endif %}{% if upload.removed %} · {% blocktrans count count=upload.removed %}{{ count }} removed from the library{% plural %}{{ count }} removed from the library{% endblocktrans %}{% endif %}</span>
+        {% if upload.track_rows %}<details class="track-list"><summary>{% blocktrans count count=upload.track_rows|length %}{{ count }} file{% plural %}{{ count }} files{% endblocktrans %}</summary><ul>{% for track in upload.track_rows %}
+          <li class="{{ track.status }}"><span title="{{ track.original_name }}">{{ track.short_name }}</span>{% if track.status != 'success' %}<small title="{{ track.message }}">{{ track.get_status_display }}{% if track.message %}: {{ track.message }}{% endif %}</small>{% endif %}</li>{% endfor %}
+        </ul></details>{% endif %}
+      </div>
+      <span class="status {{ upload.status }}">{{ upload.get_status_display }}</span>
     </article>
   {% endfor %}</div>
   {% else %}<div class="empty-state"><span>♫</span><strong>{% trans "No uploads yet" %}</strong><p class="muted">{% trans "Selected files and their processing status will appear here." %}</p></div>{% endif %}

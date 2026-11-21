@@ -3,12 +3,13 @@ import logging
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.db.models import Prefetch
 from django.http import JsonResponse
 from django.shortcuts import redirect, render
 from django.utils.translation import gettext as _
 from django.views.decorators.http import require_http_methods
 
-from .models import UploadRecord
+from .models import Upload, UploadRecord
 from .processing import UploadBatch, get_policy, process_upload, quota_for, used_quota
 
 logger = logging.getLogger(__name__)
@@ -25,12 +26,30 @@ def _reject(request, message, status):
     return redirect("dashboard")
 
 
+def _recent_uploads(user, limit=50):
+    uploads = list(
+        Upload.objects.filter(user=user).prefetch_related(
+            Prefetch("tracks", queryset=UploadRecord.objects.order_by("id"))
+        )[:limit]
+    )
+    for upload in uploads:
+        tracks = list(upload.tracks.all())
+        upload.removed = sum(1 for track in tracks if track.status == UploadRecord.Status.REMOVED)
+        prefix = f"{upload.name}/" if upload.kind == Upload.Kind.ARCHIVE else ""
+        for track in tracks:
+            name = track.original_name
+            track.short_name = name[len(prefix):] if prefix and name.startswith(prefix) else name
+        # A lone record that is the upload itself (single file, unreadable archive) needs no track list.
+        upload.track_rows = tracks if len(tracks) > 1 or (tracks and tracks[0].short_name != upload.name) else []
+    return uploads
+
+
 def _dashboard_context(request):
     policy = get_policy()
     quota = quota_for(request.user, policy)
     used = used_quota(request.user)
     return {
-        "records": UploadRecord.objects.filter(user=request.user)[:50],
+        "uploads": _recent_uploads(request.user),
         "policy": policy,
         "quota": quota,
         "used": used,

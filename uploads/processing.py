@@ -18,7 +18,7 @@ from django.utils.translation import ngettext
 
 from .archives import extract_rar, extract_zip
 from .library import LibraryWriter
-from .models import UploadPolicy, UploadRecord, UserUploadLimit
+from .models import Upload, UploadPolicy, UploadRecord, UserUploadLimit
 from .navidrome import NavidromeClient
 from .tags import TrackTags, read_tags
 from .validators import (
@@ -51,8 +51,30 @@ def quota_for(user, policy):
     return override if override is not None else policy.daily_quota
 
 
-def used_quota(user):
+def quota_window_start(user):
+    """Start of the rolling 24-hour window, moved forward when an administrator reset the user's usage."""
     since = timezone.now() - timedelta(hours=24)
+    try:
+        reset_at = user.upload_limit.quota_reset_at
+    except UserUploadLimit.DoesNotExist:
+        reset_at = None
+    return max(since, reset_at) if reset_at else since
+
+
+def reset_quota(users):
+    """Forget the 24-hour usage of the given users (their upload history is kept)."""
+    now = timezone.now()
+    count = 0
+    for user in users:
+        limit, _created = UserUploadLimit.objects.get_or_create(user=user)
+        limit.quota_reset_at = now
+        limit.save(update_fields=["quota_reset_at"])
+        count += 1
+    return count
+
+
+def used_quota(user):
+    since = quota_window_start(user)
     return (
         UploadRecord.objects.filter(user=user, status=UploadRecord.Status.SUCCESS, uploaded_at__gte=since)
         .aggregate(total=Sum("size"))["total"]
@@ -97,6 +119,9 @@ class UploadBatch:
         self.seen_hashes = {}
         self.seen_keys = {}
         self.stored_count = 0
+        self.pending_records = []
+        self.folder_uploads = {}
+        self.current_folder = None
 
     # ------------------------------------------------------------------ duplicate detection
 
@@ -151,7 +176,7 @@ class UploadBatch:
 
     def _record(self, status, original_name, message, size=0, track=None):
         tags = track.tags if track else TrackTags()
-        return UploadRecord.objects.create(
+        record = UploadRecord.objects.create(
             user=self.user,
             username_snapshot=self.user.get_username(),
             original_name=original_name[:500],
@@ -165,6 +190,8 @@ class UploadBatch:
             status=status,
             message=message[:300],
         )
+        self.pending_records.append(record)
+        return record
 
     def record_failure(self, original_name, message, size=0):
         self._record(UploadRecord.Status.FAILED, original_name, message, size)
@@ -199,6 +226,38 @@ class UploadBatch:
         self.stored_count += len(tracks)
         for track in tracks:
             self.remember(track)
+
+    # ------------------------------------------------------------------ history
+
+    def add_to_history(self, result, kind, size, folder=None):
+        """Attach the records created for one uploaded file to an Upload line of the history.
+
+        Archives get a line of their own. Loose tracks of one request that land in the same library
+        folder share a line; tracks without a known folder (rejected files) get their own line.
+        """
+        records, self.pending_records = self.pending_records, []
+        upload = self.folder_uploads.get(folder) if kind == Upload.Kind.FILE and folder is not None else None
+        if upload is None:
+            upload = Upload(
+                user=self.user,
+                username_snapshot=self.user.get_username(),
+                kind=kind,
+                name=result["name"][:500],
+                status=Upload.Status.FAILED,
+            )
+            if kind == Upload.Kind.FILE and folder is not None:
+                self.folder_uploads[folder] = upload
+        else:
+            upload.kind = Upload.Kind.FOLDER
+            upload.name = "/".join(["Uploads", *folder])[:500]
+        upload.size += max(0, size)
+        upload.message = result["message"][:300] if upload.kind != Upload.Kind.FOLDER else ""
+        upload.save()
+        if records:
+            UploadRecord.objects.filter(pk__in=[record.pk for record in records]).update(upload=upload)
+        upload.refresh_summary(list(upload.tracks.all()))
+        upload.save()
+        return upload
 
 
 UNKNOWN_ARTIST = "Unknown Artist"
@@ -249,13 +308,14 @@ def process_single_audio(batch, uploaded_file, name):
 
 def _process_single_track(batch, track):
     prepare_track(batch, track)
+    track.rel_dir = single_track_dir(track.tags)
+    batch.current_folder = track.rel_dir
     reason = batch.find_duplicate(track)
     if reason:
         batch.record_duplicate(track, reason)
         batch.remember(track)
         return {"name": track.original_name, "status": "duplicate", "message": reason}
     batch.check_quota(track.size)
-    track.rel_dir = single_track_dir(track.tags)
     batch.store_tracks([track], success_message=_("Added to the shared music library."))
     return {
         "name": track.original_name,
@@ -454,10 +514,22 @@ def process_archive(batch, uploaded_file, name):
 
 def process_upload(batch, uploaded_file):
     name = safe_basename(uploaded_file.name)
+    is_archive = is_zip_name(name) or is_rar_name(name)
+    batch.current_folder = None
+    result = _process_upload(batch, uploaded_file, name, is_archive)
+    if is_archive:
+        batch.add_to_history(result, Upload.Kind.ARCHIVE, uploaded_file.size)
+    else:
+        folder = batch.current_folder if result["status"] != "failed" else None
+        batch.add_to_history(result, Upload.Kind.FILE, uploaded_file.size, folder)
+    return result
+
+
+def _process_upload(batch, uploaded_file, name, is_archive):
     try:
         if uploaded_file.size > batch.policy.max_file_size:
             raise UploadRejected(_("The file exceeds the configured per-file size limit."))
-        if is_zip_name(name) or is_rar_name(name):
+        if is_archive:
             return process_archive(batch, uploaded_file, name)
         return process_single_audio(batch, uploaded_file, name)
     except UploadRejected as exc:

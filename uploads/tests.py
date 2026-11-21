@@ -4,15 +4,19 @@ import tempfile
 import unittest
 import zipfile
 from pathlib import Path
+from datetime import timedelta
+from importlib import import_module
 from unittest.mock import patch
 
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.contrib.staticfiles import finders
 from django.core.files.uploadedfile import SimpleUploadedFile
+from django.apps import apps as django_apps
 from django.test import TestCase, override_settings
+from django.utils import timezone
 
-from .models import UploadPolicy, UploadRecord
+from .models import Upload, UploadPolicy, UploadRecord, UserUploadLimit
 from .navidrome import NavidromeClient
 
 TEST_DATA = Path(__file__).resolve().parent / "test_data"
@@ -423,6 +427,140 @@ class ViewTests(UploadTestCase):
         self.assertEqual(self.client.get("/").status_code, 302)
         self.assertEqual(self.client.get("/history/").status_code, 302)
 
+
+
+class QuotaResetTests(UploadTestCase):
+    def fill_quota(self):
+        self.policy.daily_quota = 2000
+        self.policy.save()
+        self.assertEqual(self.post_one(self.user, self.upload("one.mp3", mp3_bytes(b"1")))["status"], "success")
+        result = self.post_one(self.user, self.upload("two.mp3", mp3_bytes(b"2")))
+        self.assertIn("quota", result["message"])
+
+    def test_admin_user_action_resets_usage_but_keeps_history(self):
+        self.fill_quota()
+        admin_user = User.objects.create_superuser("boss", password="a-long-admin-password")
+        self.client.force_login(admin_user)
+        self.client.cookies["django_language"] = "en"
+        response = self.client.post(
+            "/admin/auth/user/",
+            {"action": "reset_upload_usage", "_selected_action": [self.user.pk]},
+            follow=True,
+        )
+        self.assertContains(response, "reset for 1 user")
+        self.assertIsNotNone(UserUploadLimit.objects.get(user=self.user).quota_reset_at)
+        self.assertIsNone(UserUploadLimit.objects.get(user=self.user).daily_quota)
+        self.assertEqual(UploadRecord.objects.filter(user=self.user, status=UploadRecord.Status.SUCCESS).count(), 1)
+        self.assertEqual(self.post_one(self.user, self.upload("two.mp3", mp3_bytes(b"2")))["status"], "success")
+
+    def test_limit_admin_action_keeps_custom_quota(self):
+        UserUploadLimit.objects.create(user=self.user, daily_quota=2000)
+        self.assertEqual(self.post_one(self.user, self.upload("one.mp3", mp3_bytes(b"1")))["status"], "success")
+        admin_user = User.objects.create_superuser("boss", password="a-long-admin-password")
+        self.client.force_login(admin_user)
+        response = self.client.post(
+            "/admin/uploads/useruploadlimit/",
+            {"action": "reset_usage", "_selected_action": [self.user.upload_limit.pk]},
+        )
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(UserUploadLimit.objects.get(user=self.user).daily_quota, 2000)
+        self.assertEqual(self.post_one(self.user, self.upload("two.mp3", mp3_bytes(b"2")))["status"], "success")
+
+    def test_admin_lists_render(self):
+        self.post_one(self.user, self.upload("a.zip", zip_bytes({"A/1.mp3": mp3_bytes(b"1")})))
+        admin_user = User.objects.create_superuser("boss", password="a-long-admin-password")
+        self.client.force_login(admin_user)
+        for url in ("/admin/auth/user/", "/admin/uploads/useruploadlimit/", "/admin/uploads/upload/"):
+            self.assertEqual(self.client.get(url).status_code, 200, url)
+        self.assertContains(self.client.get(f"/admin/uploads/upload/{Upload.objects.get().pk}/change/"), "1.mp3")
+
+
+class HistoryGroupingTests(UploadTestCase):
+    def test_archive_is_one_history_line(self):
+        payload = zip_bytes({
+            "Album/01.mp3": mp3_bytes(b"1", artist="Band", album="Album", title="One"),
+            "Album/02.mp3": mp3_bytes(b"2", artist="Band", album="Album", title="Two"),
+            "Album/03.mp3": b"broken",
+        })
+        self.post_one(self.user, self.upload("album.zip", payload))
+        upload = Upload.objects.get()
+        self.assertEqual((upload.kind, upload.name, upload.status), ("archive", "album.zip", "partial"))
+        self.assertEqual((upload.added, upload.duplicates, upload.failed), (2, 0, 1))
+        self.assertEqual(upload.folder_list, ["Uploads/Band/Album"])
+        self.assertEqual(upload.tracks.count(), 3)
+
+        self.client.cookies["django_language"] = "en"
+        response = self.client.get("/history/")
+        self.assertContains(response, "album.zip")
+        self.assertContains(response, "2 tracks added")
+        self.assertContains(response, "Uploads/Band/Album")
+        self.assertContains(response, "1 failed")
+        self.assertContains(response, "3 files")
+
+    def test_loose_tracks_of_one_request_are_grouped_by_folder(self):
+        self.post_files(
+            self.user,
+            self.upload("01.mp3", mp3_bytes(b"1", artist="Band", album="Album", title="One")),
+            self.upload("02.mp3", mp3_bytes(b"2", artist="Band", album="Album", title="Two")),
+            self.upload("other.mp3", mp3_bytes(b"3", artist="Solo", album="Single", title="X")),
+            self.upload("fake.mp3", b"not audio"),
+        )
+        uploads = {upload.name: upload for upload in Upload.objects.all()}
+        self.assertEqual(set(uploads), {"Uploads/Band/Album", "other.mp3", "fake.mp3"})
+        self.assertEqual((uploads["Uploads/Band/Album"].kind, uploads["Uploads/Band/Album"].added), ("folder", 2))
+        self.assertEqual(uploads["other.mp3"].kind, "file")
+        self.assertEqual(uploads["fake.mp3"].status, "failed")
+        self.assertTrue(uploads["fake.mp3"].message)
+
+        response = self.client.get("/history/")
+        self.assertContains(response, "Uploads/Band/Album")
+
+    def test_duplicate_archive_line(self):
+        payload = zip_bytes({"A/1.mp3": mp3_bytes(b"1"), "A/2.mp3": mp3_bytes(b"2")})
+        self.post_one(self.user, self.upload("a.zip", payload))
+        self.post_one(self.user, self.upload("a.zip", payload))
+        latest = Upload.objects.first()
+        self.assertEqual((latest.status, latest.duplicates, latest.added), ("duplicate", 2, 0))
+        self.assertIn("already in the library", latest.message)
+
+    def test_wrong_archive_has_single_line_without_track_list(self):
+        self.post_one(self.user, self.upload("bad.zip", b"not a zip"))
+        upload = Upload.objects.get()
+        self.assertEqual((upload.kind, upload.status), ("archive", "failed"))
+        self.assertNotContains(self.client.get("/history/"), "<details")
+
+    def test_migration_groups_old_records(self):
+        migration = import_module("uploads.migrations.0005_upload_history")
+        now = timezone.now()
+
+        def record(name, status="success", stored="", minutes=0):
+            return UploadRecord.objects.create(
+                user=self.user, username_snapshot="listener", original_name=name,
+                stored_name=stored, size=10, status=status, uploaded_at=now + timedelta(minutes=minutes),
+            )
+
+        record("x.rar", status="failed")
+        record("x.rar", status="failed")
+        record("x.rar/A/1.mp3", stored="Band/A/1.mp3", minutes=1)
+        record("x.rar/A/2.mp3", status="duplicate", minutes=1)
+        record("x.rar/A/1.mp3", status="duplicate", minutes=2)
+        record("x.rar/A/2.mp3", status="duplicate", minutes=2)
+        record("a.mp3", stored="Kino/Best/a.mp3", minutes=3)
+        record("b.mp3", stored="Kino/Best/b.mp3", minutes=3)
+        record("song.mp3", stored="song.mp3", minutes=4)
+        migration.group_existing_records(django_apps, None)
+
+        uploads = list(Upload.objects.order_by("uploaded_at", "id"))
+        self.assertEqual([(u.kind, u.name, u.status, u.tracks.count()) for u in uploads], [
+            ("archive", "x.rar", "failed", 1),
+            ("archive", "x.rar", "failed", 1),
+            ("archive", "x.rar", "partial", 2),
+            ("archive", "x.rar", "duplicate", 2),
+            ("folder", "Uploads/Kino/Best", "success", 2),
+            ("file", "song.mp3", "success", 1),
+        ])
+        self.assertEqual(uploads[2].folder_list, ["Uploads/Band/A"])
+        self.assertFalse(UploadRecord.objects.filter(upload=None).exists())
 
 class UploadPolicyValidationTests(TestCase):
     def test_policy_singleton_is_admin_managed(self):
