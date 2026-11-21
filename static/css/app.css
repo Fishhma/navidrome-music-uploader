@@ -697,3 +697,107 @@ button:disabled { opacity: 0.8; }
 }
 .password-dialog-body input[type="password"]:focus-visible { outline: 2px solid var(--accent, #bbf06b); outline-offset: 2px; }
 .password-dialog-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 4px; }
+
+/* Upload results, duplicates and processing state */
+.file-icon.warn {
+  border-color: rgba(245, 206, 131, 0.2);
+  color: var(--warning);
+  background: rgba(226, 170, 69, 0.08);
+}
+.status.duplicate,
+.status.partial {
+  border-color: rgba(245, 206, 131, 0.2);
+  color: var(--warning);
+  background: var(--warning-bg);
+}
+.status.removed {
+  border-color: var(--line);
+  color: var(--muted);
+  background: rgba(140, 151, 168, 0.08);
+}
+.progress-wrap.processing .progress-track i {
+  background: linear-gradient(90deg, #9bd94a 0%, var(--accent-hover) 50%, #9bd94a 100%);
+  background-size: 200% 100%;
+  animation: upload-processing 1.2s linear infinite;
+}
+@keyframes upload-processing {
+  from { background-position: 200% 0; }
+  to { background-position: 0 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .progress-wrap.processing .progress-track i { animation: none; }
+}
+.results {
+  display: grid;
+  gap: 10px;
+  margin-top: 14px;
+}
+.result-row {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+  padding: 13px 15px;
+  border: 1px solid var(--line);
+  border-radius: 13px;
+  background: rgba(10, 13, 18, 0.42);
+  font-size: 13px;
+  overflow-wrap: anywhere;
+}
+.result-row.success { border-color: rgba(142, 224, 173, 0.22); }
+.result-row.partial,
+.result-row.duplicate { border-color: rgba(245, 206, 131, 0.25); }
+.result-row.failed { border-color: rgba(255, 153, 153, 0.25); color: var(--danger); }
+.result-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+.result-head strong {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--text);
+  font-weight: 650;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.result-row > p { font-size: 12px; }
+.result-row details { font-size: 12px; color: var(--text-soft); }
+.result-row summary { cursor: pointer; color: var(--muted); }
+.result-row ul { margin: 8px 0 0; padding-left: 18px; }
+.result-row li { margin: 3px 0; }
+.result-row li.duplicate { color: var(--warning); }
+.result-row li.failed { color: var(--danger); }
+.scan-note { font-size: 12px; }
+
+/* Grouped upload history: archives and folders with a collapsible track list */
+.file-icon.archive { font-size: 10px; font-weight: 750; letter-spacing: 0.04em; }
+.history-row:has(details[open]) { align-items: flex-start; }
+.track-list { margin-top: 2px; font-size: 11px; }
+.track-list summary {
+  width: max-content;
+  color: var(--muted);
+  cursor: pointer;
+  user-select: none;
+}
+.track-list summary:hover { color: var(--text); }
+.track-list ul {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin: 8px 0 2px;
+  padding: 0 0 0 12px;
+  border-left: 1px solid var(--line);
+  list-style: none;
+}
+.track-list li { display: flex; min-width: 0; flex-direction: column; gap: 1px; color: var(--text); }
+.track-list li span,
+.track-list li small { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.track-list li small { color: var(--muted); }
+.track-list li.duplicate small,
+.track-list li.removed small { color: var(--warning); }
+.track-list li.failed small { color: var(--danger); }
+@media (max-width: 640px) {
+  .track-list li span,
+  .track-list li small { white-space: normal; }
+}

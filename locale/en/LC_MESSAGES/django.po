@@ -3,352 +3,362 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Language: en\n"
-
-msgid "Added %(count)s audio file(s) from the RAR archive."
-msgstr "Added %(count)s audio file(s) from the RAR archive."
-
-msgid "Added %(count)s audio file(s) from the ZIP archive."
-msgstr "Added %(count)s audio file(s) from the ZIP archive."
-
-msgid "Added to the shared music library."
-msgstr "Added to the shared music library."
-
-msgid "Administration"
-msgstr "Administration"
-
-msgid "At most %(max_files)s files can be uploaded in one request."
-msgstr "At most %(max_files)s files can be uploaded in one request."
-
-msgid "Could not process the server response."
-msgstr "Could not process the server response."
-
-msgid "Done"
-msgstr "Done"
-
-msgid "Drop files here"
-msgstr "Drop files here"
-
-msgid "Encrypted ZIP archives are not supported."
-msgstr "Encrypted ZIP archives are not supported."
-
-msgid "Extracted from RAR and added to the shared music library."
-msgstr "Extracted from RAR and added to the shared music library."
-
-msgid "Extracted from ZIP and added to the shared music library."
-msgstr "Extracted from ZIP and added to the shared music library."
-
-msgid "Failed"
-msgstr "Failed"
-
-msgid "Files will appear in the shared Navidrome library after indexing."
-msgstr "Files will appear in the shared Navidrome library after indexing."
-
-msgid "Language"
-msgstr "Language"
-
-msgid "Log out"
-msgstr "Log out"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 msgid "Music library"
 msgstr "Music library"
 
-msgid "Network error. Check your connection and refresh the page."
-msgstr "Network error. Check your connection and refresh the page."
+msgid "Language"
+msgstr "Language"
 
-msgid "No uploads yet"
-msgstr "No uploads yet"
+msgid "Administration"
+msgstr "Administration"
 
-msgid "Only you can see this history"
-msgstr "Only you can see this history"
-
-msgid "PERSONAL ACTIVITY"
-msgstr "PERSONAL ACTIVITY"
-
-msgid "Password"
-msgstr "Password"
-
-msgid "Password-protected RAR archives are not supported."
-msgstr "Password-protected RAR archives are not supported."
-
-msgid "Preparing…"
-msgstr "Preparing…"
+msgid "Log out"
+msgstr "Log out"
 
 msgid "Private uploads to your shared music library"
 msgstr "Private uploads to your shared music library"
 
-msgid "Recent uploads"
-msgstr "Recent uploads"
-
-msgid "SHARED LIBRARY"
-msgstr "SHARED LIBRARY"
-
-msgid "Select at least one file."
-msgstr "Select at least one file."
-
-msgid "Selected files and their processing status will appear here."
-msgstr "Selected files and their processing status will appear here."
-
-msgid "Server storage is unavailable."
-msgstr "Server storage is unavailable."
-
 msgid "Sign in"
 msgstr "Sign in"
-
-msgid "Sign in to upload music securely."
-msgstr "Sign in to upload music securely."
-
-msgid "The RAR archive contains an unreadable audio file."
-msgstr "The RAR archive contains an unreadable audio file."
-
-msgid "The RAR archive contains an unsafe path or link."
-msgstr "The RAR archive contains an unsafe path or link."
-
-msgid "The RAR archive contains no supported audio files."
-msgstr "The RAR archive contains no supported audio files."
-
-msgid "The RAR archive contains too many entries."
-msgstr "The RAR archive contains too many entries."
-
-msgid "The RAR archive exceeds the configured compression ratio."
-msgstr "The RAR archive exceeds the configured compression ratio."
-
-msgid "The RAR archive expands beyond the configured size limit."
-msgstr "The RAR archive expands beyond the configured size limit."
-
-msgid "The RAR archive is invalid or cannot be read."
-msgstr "The RAR archive is invalid or cannot be read."
-
-msgid "The ZIP archive contains an unreadable audio file."
-msgstr "The ZIP archive contains an unreadable audio file."
-
-msgid "The ZIP archive contains an unsafe path or link."
-msgstr "The ZIP archive contains an unsafe path or link."
-
-msgid "The ZIP archive contains no supported audio files."
-msgstr "The ZIP archive contains no supported audio files."
-
-msgid "The ZIP archive contains too many entries."
-msgstr "The ZIP archive contains too many entries."
-
-msgid "The ZIP archive exceeds the configured compression ratio."
-msgstr "The ZIP archive exceeds the configured compression ratio."
-
-msgid "The ZIP archive expands beyond the configured size limit."
-msgstr "The ZIP archive expands beyond the configured size limit."
-
-msgid "The ZIP archive is invalid."
-msgstr "The ZIP archive is invalid."
-
-msgid "The file contents do not match a supported audio format."
-msgstr "The file contents do not match a supported audio format."
-
-msgid "The file exceeds the configured per-file size limit."
-msgstr "The file exceeds the configured per-file size limit."
-
-msgid "The server could not process this file."
-msgstr "The server could not process this file."
-
-msgid "The total upload request exceeds the server limit."
-msgstr "The total upload request exceeds the server limit."
-
-msgid "The user's rolling 24-hour upload quota would be exceeded."
-msgstr "The user's rolling 24-hour upload quota would be exceeded."
-
-msgid "This audio file has already been uploaded."
-msgstr "This audio file has already been uploaded."
-
-msgid "Transferring files:"
-msgstr "Transferring files:"
-
-msgid "Unsupported file type. ZIP or a supported audio format is required."
-msgstr "Unsupported file type. ZIP or a supported audio format is required."
-
-msgid "Up to %(max_size)s per file · up to %(max_files)s files at a time"
-msgstr "Up to %(max_size)s per file · up to %(max_files)s files at a time"
-
-msgid "Upload cancelled."
-msgstr "Upload cancelled."
-
-msgid "Upload error."
-msgstr "Upload error."
-
-msgid "Upload files"
-msgstr "Upload files"
-
-msgid "Upload music"
-msgstr "Upload music"
-
-msgid "Uploading files…"
-msgstr "Uploading files…"
-
-msgid "Used in the last 24 hours"
-msgstr "Used in the last 24 hours"
-
-msgid "Username"
-msgstr "Username"
-
-msgid "Welcome back"
-msgstr "Welcome back"
 
 msgid "YOUR MUSIC LIBRARY"
 msgstr "YOUR MUSIC LIBRARY"
 
+msgid "Welcome back"
+msgstr "Welcome back"
+
+msgid "Sign in to upload music securely."
+msgstr "Sign in to upload music securely."
+
+msgid "Username"
+msgstr "Username"
+
+msgid "Password"
+msgstr "Password"
+
+msgid "Used in the last 24 hours"
+msgstr "Used in the last 24 hours"
+
+#, python-format
+msgid "%(count)s track added"
+msgid_plural "%(count)s tracks added"
+msgstr[0] "%(count)s track added"
+msgstr[1] "%(count)s tracks added"
+
+#, python-format
+msgid "%(count)s duplicate"
+msgid_plural "%(count)s duplicates"
+msgstr[0] "%(count)s duplicate"
+msgstr[1] "%(count)s duplicates"
+
+#, python-format
+msgid "%(count)s failed"
+msgid_plural "%(count)s failed"
+msgstr[0] "%(count)s failed"
+msgstr[1] "%(count)s failed"
+
+#, python-format
+msgid "%(count)s removed from the library"
+msgid_plural "%(count)s removed from the library"
+msgstr[0] "%(count)s removed from the library"
+msgstr[1] "%(count)s removed from the library"
+
+#, python-format
+msgid "%(count)s file"
+msgid_plural "%(count)s files"
+msgstr[0] "%(count)s file"
+msgstr[1] "%(count)s files"
+
+msgid "No uploads yet"
+msgstr "No uploads yet"
+
+msgid "Selected files and their processing status will appear here."
+msgstr "Selected files and their processing status will appear here."
+
+msgid "Upload music"
+msgstr "Upload music"
+
+msgid "SHARED LIBRARY"
+msgstr "SHARED LIBRARY"
+
+msgid "Files will appear in the shared Navidrome library after indexing."
+msgstr "Files will appear in the shared Navidrome library after indexing."
+
+msgid "Drop files here"
+msgstr "Drop files here"
+
 msgid "or click to choose files"
 msgstr "or click to choose files"
 
-msgid "Unsupported file type. ZIP, RAR, or a supported audio format is required."
-msgstr "Unsupported file type. ZIP, RAR, or a supported audio format is required."
+msgid "ZIP and RAR archives"
+msgstr "ZIP and RAR archives"
 
-msgid "%(name)s: file exceeds the configured per-file size limit."
-msgstr "%(name)s: file exceeds the configured per-file size limit."
+msgid "Archive password (if required)"
+msgstr "Archive password (if required)"
 
-msgid "%(name)s: this audio file has already been uploaded."
-msgstr "%(name)s: this audio file has already been uploaded."
+#, python-format
+msgid "Up to %(max_size)s per file · up to %(max_files)s files at a time"
+msgstr "Up to %(max_size)s per file · up to %(max_files)s files at a time"
 
+msgid "Upload files"
+msgstr "Upload files"
 
-msgid "Choose a folder"
-msgstr "Choose a folder"
+msgid "Preparing…"
+msgstr "Preparing…"
 
+msgid "PERSONAL ACTIVITY"
+msgstr "PERSONAL ACTIVITY"
 
-msgid "This archive is password-protected. Enter its password:"
-msgstr "This archive is password-protected. Enter its password:"
+msgid "Recent uploads"
+msgstr "Recent uploads"
 
+msgid "Only you can see this history"
+msgstr "Only you can see this history"
 
-msgid "Incorrect password. Try again."
-msgstr "Incorrect password. Try again."
+#, python-format
+msgid "The 24-hour upload usage was reset for %(count)d user."
+msgid_plural "The 24-hour upload usage was reset for %(count)d users."
+msgstr[0] "The 24-hour upload usage was reset for %(count)d user."
+msgstr[1] "The 24-hour upload usage was reset for %(count)d users."
 
+msgid "Reset the 24-hour upload usage"
+msgstr "Reset the 24-hour upload usage"
 
-msgid "Password entry cancelled."
-msgstr "Password entry cancelled."
+#, python-format
+msgid "The %(type)s archive contains too many files."
+msgstr "The %(type)s archive contains too many files."
 
+#, python-format
+msgid "The %(type)s archive expands beyond the configured size limit."
+msgstr "The %(type)s archive expands beyond the configured size limit."
 
-msgid "Too many incorrect password attempts."
-msgstr "Too many incorrect password attempts."
+#, python-format
+msgid "The %(type)s archive exceeds the configured compression ratio."
+msgstr "The %(type)s archive exceeds the configured compression ratio."
 
+#, python-format
+msgid "The %(type)s archive contains no supported audio files."
+msgstr "The %(type)s archive contains no supported audio files."
 
-msgid "The supplied folder path is unsafe."
-msgstr "The supplied folder path is unsafe."
+msgid "The ZIP archive is invalid."
+msgstr "The ZIP archive is invalid."
 
+#, python-format
+msgid "The %(type)s archive contains an unsafe path."
+msgstr "The %(type)s archive contains an unsafe path."
 
-msgid "Unsupported image format."
-msgstr "Unsupported image format."
+msgid "AES-encrypted ZIP archives are not supported. Use RAR or an unencrypted ZIP."
+msgstr "AES-encrypted ZIP archives are not supported. Use RAR or an unencrypted ZIP."
 
+msgid "This archive is password-protected. Enter the archive password."
+msgstr "This archive is password-protected. Enter the archive password."
 
-msgid "The file contents do not match a supported image format."
-msgstr "The file contents do not match a supported image format."
+msgid "The archive password is incorrect."
+msgstr "The archive password is incorrect."
 
-
-msgid "The ZIP archive contains too many files."
-msgstr "The ZIP archive contains too many files."
-
-
-msgid "The ZIP archive contains no supported audio files or cover images."
-msgstr "The ZIP archive contains no supported audio files or cover images."
-
-
-msgid "The ZIP archive is invalid or cannot be read."
-msgstr "The ZIP archive is invalid or cannot be read."
-
-
-msgid "The RAR archive contains too many files."
-msgstr "The RAR archive contains too many files."
-
-
-msgid "This RAR archive is password-protected."
-msgstr "This RAR archive is password-protected."
-
-
-msgid "The RAR password is incorrect."
-msgstr "The RAR password is incorrect."
-
-
-msgid "This ZIP archive is password-protected."
-msgstr "This ZIP archive is password-protected."
-
-
-msgid "The ZIP password is incorrect or the archive is damaged."
-msgstr "The ZIP password is incorrect or the archive is damaged."
-
-
-msgid "The archive contains an unreadable media file."
-msgstr "The archive contains an unreadable media file."
-
-
-msgid "The archive expands beyond the configured size limit."
-msgstr "The archive expands beyond the configured size limit."
-
-
-msgid "%(name)s: this file has already been uploaded."
-msgstr "%(name)s: this file has already been uploaded."
-
-
-msgid "The destination path is unsafe."
-msgstr "The destination path is unsafe."
-
-
-msgid "This file has already been uploaded."
-msgstr "This file has already been uploaded."
-
-
-msgid "Added cover image to the shared music library."
-msgstr "Added cover image to the shared music library."
-
-
-msgid "Extracted media and cover art from archive."
-msgstr "Extracted media and cover art from archive."
-
-
-msgid "Extracted from archive and added to the shared music library."
-msgstr "Extracted from archive and added to the shared music library."
-
-
-msgid "Added %(count)s media file(s) from the %(kind)s archive."
-msgstr "Added %(count)s media file(s) from the %(kind)s archive."
-
-
-msgid "Select one folder at a time."
-msgstr "Select one folder at a time."
-
-
-msgid "The selected folder paths are invalid."
-msgstr "The selected folder paths are invalid."
-
-
-msgid "Nested archives are not unpacked from folder uploads."
-msgstr "Nested archives are not unpacked from folder uploads."
-
-
-msgid "Ignored unsupported non-media file."
-msgstr "Ignored unsupported non-media file."
-
-
-msgid "The archive password is incorrect or required."
-msgstr "The archive password is incorrect or required."
-
-
-msgid "A file with the same name already exists in this folder."
-msgstr "A file with the same name already exists in this folder."
-
-
-msgid "Archive password"
-msgstr "Archive password"
-
-
-msgid "Cancel"
-msgstr "Cancel"
-
-
-msgid "Continue"
-msgstr "Continue"
-
-
-msgid "The archive contains an unsafe path or link."
-msgstr "The archive contains an unsafe path or link."
-
-
-msgid "The RAR archive contains no supported audio files or cover images."
-msgstr "The RAR archive contains no supported audio files or cover images."
-
+msgid "The ZIP archive uses an unsupported compression method."
+msgstr "The ZIP archive uses an unsupported compression method."
 
 msgid "The archive password is incorrect or the archive is damaged."
 msgstr "The archive password is incorrect or the archive is damaged."
+
+#, python-format
+msgid "The ZIP archive is damaged (%(name)s)."
+msgstr "The ZIP archive is damaged (%(name)s)."
+
+msgid "The server cannot read this encrypted RAR archive."
+msgstr "The server cannot read this encrypted RAR archive."
+
+msgid "Multi-volume RAR archives are not supported. Upload a single-volume archive."
+msgstr "Multi-volume RAR archives are not supported. Upload a single-volume archive."
+
+msgid "The RAR archive is invalid or the password is incorrect."
+msgstr "The RAR archive is invalid or the password is incorrect."
+
+msgid "Extracting the RAR archive took too long."
+msgstr "Extracting the RAR archive took too long."
+
+msgid "The RAR archive is damaged (checksum error)."
+msgstr "The RAR archive is damaged (checksum error)."
+
+msgid "The server ran out of memory while extracting the archive."
+msgstr "The server ran out of memory while extracting the archive."
+
+msgid "The RAR archive could not be extracted."
+msgstr "The RAR archive could not be extracted."
+
+msgid "RAR extraction is unavailable on the server."
+msgstr "RAR extraction is unavailable on the server."
+
+#, python-format
+msgid "The RAR archive could not extract %(name)s."
+msgstr "The RAR archive could not extract %(name)s."
+
+msgid "Archive"
+msgstr "Archive"
+
+msgid "Folder"
+msgstr "Folder"
+
+msgid "File"
+msgstr "File"
+
+msgid "Done"
+msgstr "Done"
+
+msgid "Partly added"
+msgstr "Partly added"
+
+msgid "Duplicate"
+msgstr "Duplicate"
+
+msgid "Failed"
+msgstr "Failed"
+
+msgid "upload history entry"
+msgstr "upload history entry"
+
+msgid "upload history"
+msgstr "upload history"
+
+msgid "Removed"
+msgstr "Removed"
+
+msgid "The file is no longer in the library."
+msgstr "The file is no longer in the library."
+
+#, python-format
+msgid "Same file as %(name)s in this upload."
+msgstr "Same file as %(name)s in this upload."
+
+#, python-format
+msgid "Already uploaded on %(date)s by %(user)s as %(name)s."
+msgstr "Already uploaded on %(date)s by %(user)s as %(name)s."
+
+#, python-format
+msgid "Same track as %(name)s in this upload."
+msgstr "Same track as %(name)s in this upload."
+
+#, python-format
+msgid "This track (%(track)s) is already in the library: %(name)s."
+msgstr "This track (%(track)s) is already in the library: %(name)s."
+
+#, python-format
+msgid "This track (%(track)s) is already in the Navidrome library: %(path)s."
+msgstr "This track (%(track)s) is already in the Navidrome library: %(path)s."
+
+msgid "The rolling 24-hour upload quota would be exceeded."
+msgstr "The rolling 24-hour upload quota would be exceeded."
+
+msgid "This audio file has already been uploaded."
+msgstr "This audio file has already been uploaded."
+
+msgid "The file exceeds the configured per-file size limit."
+msgstr "The file exceeds the configured per-file size limit."
+
+msgid "Added to the shared music library."
+msgstr "Added to the shared music library."
+
+#, python-format
+msgid "Added to the library as %(path)s."
+msgstr "Added to the library as %(path)s."
+
+#, python-format
+msgid "%(count)d track from the archive is already in the library."
+msgid_plural "All %(count)d tracks from the archive are already in the library."
+msgstr[0] "%(count)d track from the archive is already in the library."
+msgstr[1] "All %(count)d tracks from the archive are already in the library."
+
+#, python-format
+msgid "Nothing was added: %(dup)d duplicate(s), %(bad)d invalid file(s)."
+msgstr "Nothing was added: %(dup)d duplicate(s), %(bad)d invalid file(s)."
+
+msgid "The archive contains no valid audio files."
+msgstr "The archive contains no valid audio files."
+
+#, python-format
+msgid "Extracted from %(type)s and added to the shared music library."
+msgstr "Extracted from %(type)s and added to the shared music library."
+
+#, python-format
+msgid "Added %(count)d track to %(folder)s."
+msgid_plural "Added %(count)d tracks to %(folder)s."
+msgstr[0] "Added %(count)d track to %(folder)s."
+msgstr[1] "Added %(count)d tracks to %(folder)s."
+
+#, python-format
+msgid "Skipped %(count)d duplicate."
+msgid_plural "Skipped %(count)d duplicates."
+msgstr[0] "Skipped %(count)d duplicate."
+msgstr[1] "Skipped %(count)d duplicates."
+
+#, python-format
+msgid "Skipped %(count)d invalid file."
+msgid_plural "Skipped %(count)d invalid files."
+msgstr[0] "Skipped %(count)d invalid file."
+msgstr[1] "Skipped %(count)d invalid files."
+
+msgid "Server storage is unavailable."
+msgstr "Server storage is unavailable."
+
+msgid "The server could not process this file."
+msgstr "The server could not process this file."
+
+msgid "Unsupported file type. Upload audio files or ZIP/RAR archives."
+msgstr "Unsupported file type. Upload audio files or ZIP/RAR archives."
+
+msgid "The file contents do not match a supported audio format."
+msgstr "The file contents do not match a supported audio format."
+
+msgid "Uploading files…"
+msgstr "Uploading files…"
+
+#, python-format
+msgid "Transferring files: %(percent)s"
+msgstr "Transferring files: %(percent)s"
+
+msgid "Processing on the server (extracting, checking for duplicates)…"
+msgstr "Processing on the server (extracting, checking for duplicates)…"
+
+msgid "Done."
+msgstr "Done."
+
+msgid "Upload error."
+msgstr "Upload error."
+
+msgid "Could not process the server response."
+msgstr "Could not process the server response."
+
+#, python-format
+msgid "Server error (HTTP %(status)s)."
+msgstr "Server error (HTTP %(status)s)."
+
+msgid "The upload is too large for the server."
+msgstr "The upload is too large for the server."
+
+msgid "Your session has expired. Refresh the page and sign in again."
+msgstr "Your session has expired. Refresh the page and sign in again."
+
+msgid "Network error. Check your connection and refresh the page."
+msgstr "Network error. Check your connection and refresh the page."
+
+msgid "Upload cancelled."
+msgstr "Upload cancelled."
+
+msgid "Details"
+msgstr "Details"
+
+msgid "Navidrome library scan started."
+msgstr "Navidrome library scan started."
+
+msgid "Select at least one file."
+msgstr "Select at least one file."
+
+#, python-format
+msgid "At most %(max_files)s files can be uploaded in one request."
+msgstr "At most %(max_files)s files can be uploaded in one request."
+
+msgid "The total upload request exceeds the server limit."
+msgstr "The total upload request exceeds the server limit."

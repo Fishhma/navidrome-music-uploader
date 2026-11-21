@@ -3,6 +3,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Language: cs\n"
+"Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
 
 msgid "Music library"
 msgstr "Hudební knihovna"
@@ -37,6 +38,50 @@ msgstr "Uživatelské jméno"
 msgid "Password"
 msgstr "Heslo"
 
+msgid "Used in the last 24 hours"
+msgstr "Využito za posledních 24 hodin"
+
+#, python-format
+msgid "%(count)s track added"
+msgid_plural "%(count)s tracks added"
+msgstr[0] "%(count)s skladba přidána"
+msgstr[1] "%(count)s skladby přidány"
+msgstr[2] "%(count)s skladeb přidáno"
+
+#, python-format
+msgid "%(count)s duplicate"
+msgid_plural "%(count)s duplicates"
+msgstr[0] "%(count)s duplikát"
+msgstr[1] "%(count)s duplikáty"
+msgstr[2] "%(count)s duplikátů"
+
+#, python-format
+msgid "%(count)s failed"
+msgid_plural "%(count)s failed"
+msgstr[0] "%(count)s chyba"
+msgstr[1] "%(count)s chyby"
+msgstr[2] "%(count)s chyb"
+
+#, python-format
+msgid "%(count)s removed from the library"
+msgid_plural "%(count)s removed from the library"
+msgstr[0] "%(count)s odstraněna z knihovny"
+msgstr[1] "%(count)s odstraněny z knihovny"
+msgstr[2] "%(count)s odstraněno z knihovny"
+
+#, python-format
+msgid "%(count)s file"
+msgid_plural "%(count)s files"
+msgstr[0] "%(count)s soubor"
+msgstr[1] "%(count)s soubory"
+msgstr[2] "%(count)s souborů"
+
+msgid "No uploads yet"
+msgstr "Zatím žádná nahrávání"
+
+msgid "Selected files and their processing status will appear here."
+msgstr "Vybrané soubory a stav jejich zpracování se zobrazí zde."
+
 msgid "Upload music"
 msgstr "Nahrát hudbu"
 
@@ -46,15 +91,19 @@ msgstr "SDÍLENÁ KNIHOVNA"
 msgid "Files will appear in the shared Navidrome library after indexing."
 msgstr "Soubory se po zaindexování objeví ve sdílené knihovně Navidrome."
 
-msgid "Used in the last 24 hours"
-msgstr "Využito za posledních 24 hodin"
-
 msgid "Drop files here"
 msgstr "Přetáhněte soubory sem"
 
 msgid "or click to choose files"
 msgstr "nebo kliknutím vyberte soubory"
 
+msgid "ZIP and RAR archives"
+msgstr "archivy ZIP a RAR"
+
+msgid "Archive password (if required)"
+msgstr "Heslo archivu (je-li vyžadováno)"
+
+#, python-format
 msgid "Up to %(max_size)s per file · up to %(max_files)s files at a time"
 msgstr "Max. %(max_size)s na soubor · max. %(max_files)s souborů najednou"
 
@@ -73,86 +122,141 @@ msgstr "Poslední nahrané soubory"
 msgid "Only you can see this history"
 msgstr "Tuto historii vidíte pouze vy"
 
-msgid "Done"
-msgstr "Hotovo"
+#, python-format
+msgid "The 24-hour upload usage was reset for %(count)d user."
+msgid_plural "The 24-hour upload usage was reset for %(count)d users."
+msgstr[0] "Využití nahrávání za 24 hodin bylo vynulováno pro %(count)d uživatele."
+msgstr[1] "Využití nahrávání za 24 hodin bylo vynulováno pro %(count)d uživatele."
+msgstr[2] "Využití nahrávání za 24 hodin bylo vynulováno pro %(count)d uživatelů."
 
-msgid "Failed"
-msgstr "Chyba"
+msgid "Reset the 24-hour upload usage"
+msgstr "Vynulovat využití nahrávání za 24 hodin"
 
-msgid "No uploads yet"
-msgstr "Zatím žádná nahrávání"
+#, python-format
+msgid "The %(type)s archive contains too many files."
+msgstr "Archiv %(type)s obsahuje příliš mnoho souborů."
 
-msgid "Selected files and their processing status will appear here."
-msgstr "Vybrané soubory a stav jejich zpracování se zobrazí zde."
+#, python-format
+msgid "The %(type)s archive expands beyond the configured size limit."
+msgstr "Archiv %(type)s po rozbalení překračuje povolenou velikost."
 
-msgid "Uploading files…"
-msgstr "Nahrávání souborů…"
+#, python-format
+msgid "The %(type)s archive exceeds the configured compression ratio."
+msgstr "Archiv %(type)s překračuje povolený kompresní poměr."
 
-msgid "Transferring files:"
-msgstr "Přenos souborů:"
-
-msgid "Upload error."
-msgstr "Chyba nahrávání."
-
-msgid "Could not process the server response."
-msgstr "Odpověď serveru se nepodařilo zpracovat."
-
-msgid "Network error. Check your connection and refresh the page."
-msgstr "Chyba sítě. Zkontrolujte připojení a obnovte stránku."
-
-msgid "Upload cancelled."
-msgstr "Nahrávání zrušeno."
-
-msgid "Unsupported file type. ZIP or a supported audio format is required."
-msgstr "Nepodporovaný typ souboru. Je vyžadován ZIP, RAR nebo podporovaný zvukový formát."
-
-msgid "The file contents do not match a supported audio format."
-msgstr "Obsah souboru neodpovídá podporovanému zvukovému formátu."
+#, python-format
+msgid "The %(type)s archive contains no supported audio files."
+msgstr "Archiv %(type)s neobsahuje žádné podporované zvukové soubory."
 
 msgid "The ZIP archive is invalid."
 msgstr "Archiv ZIP je neplatný."
 
-msgid "The ZIP archive contains too many entries."
-msgstr "Archiv ZIP obsahuje příliš mnoho položek."
+#, python-format
+msgid "The %(type)s archive contains an unsafe path."
+msgstr "Archiv %(type)s obsahuje nebezpečnou cestu."
 
-msgid "The ZIP archive contains an unsafe path or link."
-msgstr "Archiv ZIP obsahuje nebezpečnou cestu nebo odkaz."
+msgid "AES-encrypted ZIP archives are not supported. Use RAR or an unencrypted ZIP."
+msgstr "Archivy ZIP šifrované AES nejsou podporovány. Použijte RAR nebo nešifrovaný ZIP."
 
-msgid "The ZIP archive expands beyond the configured size limit."
-msgstr "Rozbalený archiv ZIP překračuje povolenou velikost."
+msgid "This archive is password-protected. Enter the archive password."
+msgstr "Archiv je chráněn heslem. Zadejte heslo archivu."
 
-msgid "The ZIP archive exceeds the configured compression ratio."
-msgstr "Poměr komprese archivu ZIP překračuje povolený limit."
+msgid "The archive password is incorrect."
+msgstr "Heslo archivu je nesprávné."
 
-msgid "Encrypted ZIP archives are not supported."
-msgstr "Šifrované archivy ZIP nejsou podporovány."
+msgid "The ZIP archive uses an unsupported compression method."
+msgstr "Archiv ZIP používá nepodporovanou metodu komprese."
 
-msgid "The ZIP archive contains no supported audio files."
-msgstr "Archiv ZIP neobsahuje žádné podporované zvukové soubory."
+msgid "The archive password is incorrect or the archive is damaged."
+msgstr "Heslo archivu je nesprávné nebo je archiv poškozený."
 
-msgid "The RAR archive contains too many entries."
-msgstr "Archiv RAR obsahuje příliš mnoho položek."
+#, python-format
+msgid "The ZIP archive is damaged (%(name)s)."
+msgstr "Archiv ZIP je poškozený (%(name)s)."
 
-msgid "The RAR archive contains an unsafe path or link."
-msgstr "Archiv RAR obsahuje nebezpečnou cestu nebo odkaz."
+msgid "The server cannot read this encrypted RAR archive."
+msgstr "Server nedokáže přečíst tento šifrovaný archiv RAR."
 
-msgid "The RAR archive expands beyond the configured size limit."
-msgstr "Rozbalený archiv RAR překračuje povolenou velikost."
+msgid "Multi-volume RAR archives are not supported. Upload a single-volume archive."
+msgstr "Vícesvazkové archivy RAR nejsou podporovány. Nahrajte archiv v jednom svazku."
 
-msgid "The RAR archive exceeds the configured compression ratio."
-msgstr "Poměr komprese archivu RAR překračuje povolený limit."
+msgid "The RAR archive is invalid or the password is incorrect."
+msgstr "Archiv RAR je neplatný nebo je heslo nesprávné."
 
-msgid "Password-protected RAR archives are not supported."
-msgstr "Archivy RAR chráněné heslem nejsou podporovány."
+msgid "Extracting the RAR archive took too long."
+msgstr "Rozbalování archivu RAR trvalo příliš dlouho."
 
-msgid "The RAR archive contains no supported audio files."
-msgstr "Archiv RAR neobsahuje žádné podporované zvukové soubory."
+msgid "The RAR archive is damaged (checksum error)."
+msgstr "Archiv RAR je poškozený (chyba kontrolního součtu)."
 
-msgid "The RAR archive is invalid or cannot be read."
-msgstr "Archiv RAR je neplatný nebo jej nelze přečíst."
+msgid "The server ran out of memory while extracting the archive."
+msgstr "Serveru došla paměť při rozbalování archivu."
 
-msgid "Added to the shared music library."
-msgstr "Přidáno do sdílené hudební knihovny."
+msgid "The RAR archive could not be extracted."
+msgstr "Archiv RAR se nepodařilo rozbalit."
+
+msgid "RAR extraction is unavailable on the server."
+msgstr "Rozbalování RAR není na serveru dostupné."
+
+#, python-format
+msgid "The RAR archive could not extract %(name)s."
+msgstr "Z archivu RAR se nepodařilo rozbalit %(name)s."
+
+msgid "Archive"
+msgstr "Archiv"
+
+msgid "Folder"
+msgstr "Složka"
+
+msgid "File"
+msgstr "Soubor"
+
+msgid "Done"
+msgstr "Hotovo"
+
+msgid "Partly added"
+msgstr "Částečně"
+
+msgid "Duplicate"
+msgstr "Duplikát"
+
+msgid "Failed"
+msgstr "Chyba"
+
+msgid "upload history entry"
+msgstr "záznam historie nahrávání"
+
+msgid "upload history"
+msgstr "historie nahrávání"
+
+msgid "Removed"
+msgstr "Odstraněno"
+
+msgid "The file is no longer in the library."
+msgstr "Soubor už v knihovně není."
+
+#, python-format
+msgid "Same file as %(name)s in this upload."
+msgstr "Stejný soubor jako %(name)s v tomto nahrávání."
+
+#, python-format
+msgid "Already uploaded on %(date)s by %(user)s as %(name)s."
+msgstr "Již nahráno %(date)s uživatelem %(user)s jako %(name)s."
+
+#, python-format
+msgid "Same track as %(name)s in this upload."
+msgstr "Stejná skladba jako %(name)s v tomto nahrávání."
+
+#, python-format
+msgid "This track (%(track)s) is already in the library: %(name)s."
+msgstr "Tato skladba (%(track)s) už v knihovně je: %(name)s."
+
+#, python-format
+msgid "This track (%(track)s) is already in the Navidrome library: %(path)s."
+msgstr "Tato skladba (%(track)s) už je v knihovně Navidrome: %(path)s."
+
+msgid "The rolling 24-hour upload quota would be exceeded."
+msgstr "Byla by překročena kvóta nahrávání za posledních 24 hodin."
 
 msgid "This audio file has already been uploaded."
 msgstr "Tento zvukový soubor už byl nahrán."
@@ -160,29 +264,51 @@ msgstr "Tento zvukový soubor už byl nahrán."
 msgid "The file exceeds the configured per-file size limit."
 msgstr "Soubor překračuje nastavený limit velikosti."
 
-msgid "The user's rolling 24-hour upload quota would be exceeded."
-msgstr "Byl by překročen uživatelský limit nahrávání za posledních 24 hodin."
+msgid "Added to the shared music library."
+msgstr "Přidáno do sdílené hudební knihovny."
 
-msgid "Extracted from ZIP and added to the shared music library."
-msgstr "Rozbaleno z ZIP a přidáno do sdílené hudební knihovny."
+#, python-format
+msgid "Added to the library as %(path)s."
+msgstr "Přidáno do knihovny jako %(path)s."
 
-msgid "Extracted from RAR and added to the shared music library."
-msgstr "Rozbaleno z RAR a přidáno do sdílené hudební knihovny."
+#, python-format
+msgid "%(count)d track from the archive is already in the library."
+msgid_plural "All %(count)d tracks from the archive are already in the library."
+msgstr[0] "%(count)d skladba z archivu už v knihovně je."
+msgstr[1] "Všechny %(count)d skladby z archivu už v knihovně jsou."
+msgstr[2] "Všech %(count)d skladeb z archivu už v knihovně je."
 
-msgid "The ZIP archive contains an unreadable audio file."
-msgstr "Archiv ZIP obsahuje nečitelný zvukový soubor."
+#, python-format
+msgid "Nothing was added: %(dup)d duplicate(s), %(bad)d invalid file(s)."
+msgstr "Nic nebylo přidáno: duplikáty %(dup)d, neplatné soubory %(bad)d."
 
-msgid "The RAR archive contains an unreadable audio file."
-msgstr "Archiv RAR obsahuje nečitelný zvukový soubor."
+msgid "The archive contains no valid audio files."
+msgstr "Archiv neobsahuje žádné platné zvukové soubory."
 
-msgid "Select at least one file."
-msgstr "Vyberte alespoň jeden soubor."
+#, python-format
+msgid "Extracted from %(type)s and added to the shared music library."
+msgstr "Rozbaleno z %(type)s a přidáno do sdílené hudební knihovny."
 
-msgid "At most %(max_files)s files can be uploaded in one request."
-msgstr "V jednom požadavku lze nahrát nejvýše %(max_files)s souborů."
+#, python-format
+msgid "Added %(count)d track to %(folder)s."
+msgid_plural "Added %(count)d tracks to %(folder)s."
+msgstr[0] "Přidána %(count)d skladba do %(folder)s."
+msgstr[1] "Přidány %(count)d skladby do %(folder)s."
+msgstr[2] "Přidáno %(count)d skladeb do %(folder)s."
 
-msgid "The total upload request exceeds the server limit."
-msgstr "Celková velikost nahrávání překračuje limit serveru."
+#, python-format
+msgid "Skipped %(count)d duplicate."
+msgid_plural "Skipped %(count)d duplicates."
+msgstr[0] "Přeskočen %(count)d duplikát."
+msgstr[1] "Přeskočeny %(count)d duplikáty."
+msgstr[2] "Přeskočeno %(count)d duplikátů."
+
+#, python-format
+msgid "Skipped %(count)d invalid file."
+msgid_plural "Skipped %(count)d invalid files."
+msgstr[0] "Přeskočen %(count)d neplatný soubor."
+msgstr[1] "Přeskočeny %(count)d neplatné soubory."
+msgstr[2] "Přeskočeno %(count)d neplatných souborů."
 
 msgid "Server storage is unavailable."
 msgstr "Úložiště serveru není dostupné."
@@ -190,165 +316,59 @@ msgstr "Úložiště serveru není dostupné."
 msgid "The server could not process this file."
 msgstr "Server tento soubor nedokázal zpracovat."
 
-msgid "Added %(count)s audio file(s) from the ZIP archive."
-msgstr "Počet zvukových souborů přidaných z archivu ZIP: %(count)s."
+msgid "Unsupported file type. Upload audio files or ZIP/RAR archives."
+msgstr "Nepodporovaný typ souboru. Nahrajte zvukové soubory nebo archivy ZIP/RAR."
 
-msgid "Added %(count)s audio file(s) from the RAR archive."
-msgstr "Počet zvukových souborů přidaných z archivu RAR: %(count)s."
+msgid "The file contents do not match a supported audio format."
+msgstr "Obsah souboru neodpovídá podporovanému zvukovému formátu."
 
-msgid "Unsupported file type. ZIP, RAR, or a supported audio format is required."
-msgstr "Nepodporovaný typ souboru. Je vyžadován ZIP, RAR nebo podporovaný zvukový formát."
+msgid "Uploading files…"
+msgstr "Nahrávání souborů…"
 
-msgid "%(name)s: file exceeds the configured per-file size limit."
-msgstr "%(name)s: soubor překračuje nastavený limit velikosti."
+#, python-format
+msgid "Transferring files: %(percent)s"
+msgstr "Přenos souborů: %(percent)s"
 
-msgid "%(name)s: this audio file has already been uploaded."
-msgstr "%(name)s: tento zvukový soubor už byl nahrán."
+msgid "Processing on the server (extracting, checking for duplicates)…"
+msgstr "Zpracování na serveru (rozbalování, kontrola duplikátů)…"
 
+msgid "Done."
+msgstr "Hotovo."
 
-msgid "Choose a folder"
-msgstr "Vybrat složku"
+msgid "Upload error."
+msgstr "Chyba nahrávání."
 
+msgid "Could not process the server response."
+msgstr "Odpověď serveru se nepodařilo zpracovat."
 
-msgid "This archive is password-protected. Enter its password:"
-msgstr "Tento archiv je chráněný heslem. Zadejte heslo:"
+#, python-format
+msgid "Server error (HTTP %(status)s)."
+msgstr "Chyba serveru (HTTP %(status)s)."
 
+msgid "The upload is too large for the server."
+msgstr "Nahrávaný obsah je pro server příliš velký."
 
-msgid "Incorrect password. Try again."
-msgstr "Nesprávné heslo. Zkuste to znovu."
+msgid "Your session has expired. Refresh the page and sign in again."
+msgstr "Relace vypršela. Obnovte stránku a přihlaste se znovu."
 
+msgid "Network error. Check your connection and refresh the page."
+msgstr "Chyba sítě. Zkontrolujte připojení a obnovte stránku."
 
-msgid "Password entry cancelled."
-msgstr "Zadávání hesla bylo zrušeno."
+msgid "Upload cancelled."
+msgstr "Nahrávání zrušeno."
 
+msgid "Details"
+msgstr "Podrobnosti"
 
-msgid "Too many incorrect password attempts."
-msgstr "Příliš mnoho nesprávných pokusů o zadání hesla."
+msgid "Navidrome library scan started."
+msgstr "Spuštěno prohledání knihovny Navidrome."
 
+msgid "Select at least one file."
+msgstr "Vyberte alespoň jeden soubor."
 
-msgid "The supplied folder path is unsafe."
-msgstr "Zadaná cesta ke složce není bezpečná."
+#, python-format
+msgid "At most %(max_files)s files can be uploaded in one request."
+msgstr "V jednom požadavku lze nahrát nejvýše %(max_files)s souborů."
 
-
-msgid "Unsupported image format."
-msgstr "Nepodporovaný formát obrázku."
-
-
-msgid "The file contents do not match a supported image format."
-msgstr "Obsah souboru neodpovídá podporovanému formátu obrázku."
-
-
-msgid "The ZIP archive contains too many files."
-msgstr "Archiv ZIP obsahuje příliš mnoho souborů."
-
-
-msgid "The ZIP archive contains no supported audio files or cover images."
-msgstr "Archiv ZIP neobsahuje podporované zvukové soubory ani obrázky obalů."
-
-
-msgid "The ZIP archive is invalid or cannot be read."
-msgstr "Archiv ZIP je neplatný nebo jej nelze přečíst."
-
-
-msgid "The RAR archive contains too many files."
-msgstr "Archiv RAR obsahuje příliš mnoho souborů."
-
-
-msgid "This RAR archive is password-protected."
-msgstr "Tento archiv RAR je chráněný heslem."
-
-
-msgid "The RAR password is incorrect."
-msgstr "Heslo k archivu RAR není správné."
-
-
-msgid "This ZIP archive is password-protected."
-msgstr "Tento archiv ZIP je chráněný heslem."
-
-
-msgid "The ZIP password is incorrect or the archive is damaged."
-msgstr "Heslo k ZIP archivu není správné nebo je archiv poškozený."
-
-
-msgid "The archive contains an unreadable media file."
-msgstr "Archiv obsahuje nečitelný mediální soubor."
-
-
-msgid "The archive expands beyond the configured size limit."
-msgstr "Archiv po rozbalení překračuje nastavený limit velikosti."
-
-
-msgid "%(name)s: this file has already been uploaded."
-msgstr "%(name)s: tento soubor už byl nahrán."
-
-
-msgid "The destination path is unsafe."
-msgstr "Cílová cesta není bezpečná."
-
-
-msgid "This file has already been uploaded."
-msgstr "Tento soubor už byl nahrán."
-
-
-msgid "Added cover image to the shared music library."
-msgstr "Obrázek obalu byl přidán do sdílené hudební knihovny."
-
-
-msgid "Extracted media and cover art from archive."
-msgstr "Mediální soubor a obrázek obalu byly rozbaleny z archivu."
-
-
-msgid "Extracted from archive and added to the shared music library."
-msgstr "Rozbaleno z archivu a přidáno do sdílené hudební knihovny."
-
-
-msgid "Added %(count)s media file(s) from the %(kind)s archive."
-msgstr "Počet mediálních souborů přidaných z archivu %(kind)s: %(count)s."
-
-
-msgid "Select one folder at a time."
-msgstr "Vybírejte vždy pouze jednu složku."
-
-
-msgid "The selected folder paths are invalid."
-msgstr "Cesty vybrané složky jsou neplatné."
-
-
-msgid "Nested archives are not unpacked from folder uploads."
-msgstr "Vnořené archivy se při nahrávání složky nerozbalují."
-
-
-msgid "Ignored unsupported non-media file."
-msgstr "Nepodporovaný soubor mimo média byl přeskočen."
-
-
-msgid "The archive password is incorrect or required."
-msgstr "Heslo archivu je nesprávné nebo je vyžadováno."
-
-
-msgid "A file with the same name already exists in this folder."
-msgstr "V této složce už existuje soubor se stejným názvem."
-
-
-msgid "Archive password"
-msgstr "Heslo archivu"
-
-
-msgid "Cancel"
-msgstr "Zrušit"
-
-
-msgid "Continue"
-msgstr "Pokračovat"
-
-
-msgid "The archive contains an unsafe path or link."
-msgstr "Archiv obsahuje nebezpečnou cestu nebo odkaz."
-
-
-msgid "The RAR archive contains no supported audio files or cover images."
-msgstr "Archiv RAR neobsahuje podporované zvukové soubory ani obrázky obalů."
-
-
-msgid "The archive password is incorrect or the archive is damaged."
-msgstr "Heslo archivu není správné nebo je archiv poškozený."
+msgid "The total upload request exceeds the server limit."
+msgstr "Celková velikost nahrávání překračuje limit serveru."

@@ -6,4 +6,5 @@ from . import views
 urlpatterns = [
     path("", views.dashboard, name="dashboard"),
     path("upload/", views.upload_files, name="upload"),
+    path("history/", views.history, name="history"),
 ]

@@ -1,14 +1,18 @@
 import os
 import re
-import zipfile
+import unicodedata
 from pathlib import PurePosixPath
 
-import rarfile
 from django.conf import settings
+from django.utils.translation import gettext as _
 
 
 AUDIO_EXTENSIONS = {".mp3", ".flac", ".wav", ".ogg", ".opus", ".m4a", ".m4b", ".aac", ".aiff", ".aif", ".wma"}
+# Images are kept only when they come from an archive next to audio files, so Navidrome can show album art.
+IMAGE_EXTENSIONS = {".jpg", ".jpeg", ".png", ".webp", ".gif"}
+MAX_IMAGE_SIZE = 50 * 1024 * 1024
 MAX_NAME_LENGTH = 180
+MAX_FOLDER_DEPTH = 4
 
 
 class UploadRejected(ValueError):
@@ -18,17 +22,40 @@ class UploadRejected(ValueError):
 def safe_basename(name):
     # Discard both POSIX and Windows path components, even on Linux.
     name = str(name).replace("\\", "/").split("/")[-1]
-    name = "".join(char for char in name if char.isprintable() and char not in "/\\:")
+    name = unicodedata.normalize("NFC", name)
+    name = "".join(char for char in name if char.isprintable() and char not in '/\\:*?"<>|')
     name = re.sub(r"\s+", " ", name).strip(" .")
     if not name:
         name = "audio"
-    return name[:MAX_NAME_LENGTH]
+    if len(name) > MAX_NAME_LENGTH:
+        stem, suffix = os.path.splitext(name)
+        suffix = suffix if len(suffix) <= 10 else ""
+        name = stem[: MAX_NAME_LENGTH - len(suffix)].rstrip(" .") + suffix
+    return name
+
+
+def safe_folder_name(name):
+    folder = safe_basename(name)
+    # A folder named like a hidden/staging file would be confusing in the library.
+    return folder.lstrip(".") or "Album"
+
+
+def extension_of(name):
+    return PurePosixPath(str(name).lower()).suffix
+
+
+def is_audio_name(name):
+    return extension_of(name) in AUDIO_EXTENSIONS
+
+
+def is_image_name(name):
+    return extension_of(name) in IMAGE_EXTENSIONS
 
 
 def inspect_audio(stream, name):
-    extension = PurePosixPath(name.lower()).suffix
+    extension = extension_of(name)
     if extension not in AUDIO_EXTENSIONS:
-        raise UploadRejected("Unsupported file type. ZIP or a supported audio format is required.")
+        raise UploadRejected(_("Unsupported file type. Upload audio files or ZIP/RAR archives."))
     stream.seek(0)
     header = stream.read(8192)
     stream.seek(0)
@@ -36,7 +63,8 @@ def inspect_audio(stream, name):
     if extension == ".mp3":
         valid = header.startswith(b"ID3") or any(header[i] == 0xFF and header[i + 1] & 0xE0 == 0xE0 for i in range(len(header) - 1))
     elif extension == ".flac":
-        valid = header.startswith(b"fLaC")
+        # Some taggers prepend an ID3v2 block to FLAC files.
+        valid = header.startswith(b"fLaC") or (header.startswith(b"ID3") and b"fLaC" in header)
     elif extension == ".wav":
         valid = len(header) >= 12 and header[:4] in {b"RIFF", b"RF64"} and header[8:12] == b"WAVE"
     elif extension in {".aiff", ".aif"}:
@@ -46,121 +74,35 @@ def inspect_audio(stream, name):
     elif extension in {".m4a", ".m4b"}:
         valid = len(header) >= 8 and header[4:8] == b"ftyp"
     elif extension == ".aac":
-        valid = len(header) >= 2 and header[0] == 0xFF and header[1] & 0xF6 == 0xF0
+        valid = header.startswith(b"ID3") or (len(header) >= 2 and header[0] == 0xFF and header[1] & 0xF6 == 0xF0)
     elif extension == ".wma":
         valid = header.startswith(bytes.fromhex("3026B2758E66CF11A6D900AA0062CE6C"))
     if not valid:
-        raise UploadRejected("The file contents do not match a supported audio format.")
+        raise UploadRejected(_("The file contents do not match a supported audio format."))
     return extension
 
 
-def validate_archive(uploaded_file, policy):
-    uploaded_file.seek(0)
-    if not zipfile.is_zipfile(uploaded_file):
-        raise UploadRejected("The ZIP archive is invalid.")
-    uploaded_file.seek(0)
-    archive = None
-    try:
-        archive = zipfile.ZipFile(uploaded_file)
-        infos = archive.infolist()
-        if len(infos) > policy.max_archive_entries:
-            raise UploadRejected("The ZIP archive contains too many entries.")
-        total_size = 0
-        audio_infos = []
-        for info in infos:
-            normalized_name = info.filename.replace("\\", "/")
-            path = PurePosixPath(normalized_name)
-            mode = info.external_attr >> 16
-            if path.is_absolute() or ".." in path.parts or not info.filename or ":" in normalized_name or "\x00" in normalized_name or (mode & 0o170000) == 0o120000:
-                raise UploadRejected("The ZIP archive contains an unsafe path or link.")
-            if info.is_dir():
-                continue
-            total_size += info.file_size
-            if total_size > policy.max_archive_expanded_size:
-                raise UploadRejected("The ZIP archive expands beyond the configured size limit.")
-            if info.file_size and (not info.compress_size or info.file_size / info.compress_size > policy.max_archive_ratio):
-                raise UploadRejected("The ZIP archive exceeds the configured compression ratio.")
-            if info.flag_bits & 0x1:
-                raise UploadRejected("Encrypted ZIP archives are not supported.")
-            extension = PurePosixPath(normalized_name.lower()).suffix
-            if extension in AUDIO_EXTENSIONS:
-                audio_infos.append(info)
-        if not audio_infos:
-            raise UploadRejected("The ZIP archive contains no supported audio files.")
-        return archive, audio_infos, total_size
-    except UploadRejected:
-        if archive:
-            archive.close()
-        raise
-    except zipfile.BadZipFile as exc:
-        if archive:
-            archive.close()
-        raise UploadRejected("The ZIP archive is invalid.") from exc
+def looks_like_image(path):
+    with open(path, "rb") as handle:
+        header = handle.read(16)
+    return (
+        header.startswith(b"\xff\xd8\xff")
+        or header.startswith(b"\x89PNG\r\n\x1a\n")
+        or header[:6] in {b"GIF87a", b"GIF89a"}
+        or (header[:4] == b"RIFF" and header[8:12] == b"WEBP")
+    )
 
 
-def validate_rar(uploaded_file, policy, password=None):
-    uploaded_file.seek(0)
-    archive = None
-    try:
-        archive = rarfile.RarFile(uploaded_file)
-        archive.setpassword(password)
-        infos = archive.infolist()
-    except rarfile.PasswordRequired as exc:
-        if archive:
-            archive.close()
-        raise UploadRejected("Enter the RAR archive password.") from exc
-    except rarfile.RarWrongPassword as exc:
-        if archive:
-            archive.close()
-        raise UploadRejected("The RAR password is incorrect.") from exc
-    except rarfile.NoCrypto as exc:
-        if archive:
-            archive.close()
-        raise UploadRejected("The server cannot read this encrypted RAR archive.") from exc
-    except rarfile.BadRarFile as exc:
-        if archive:
-            archive.close()
-        raise UploadRejected("The RAR archive is invalid or the password is incorrect.") from exc
-    except rarfile.Error as exc:
-        if archive:
-            archive.close()
-        raise UploadRejected("The RAR archive is invalid or unreadable.") from exc
-
-    try:
-        if archive.needs_password() and not password:
-            raise UploadRejected("Enter the RAR archive password.")
-        if len(infos) > policy.max_archive_entries:
-            raise UploadRejected("The RAR archive contains too many entries.")
-        total_size = 0
-        audio_infos = []
-        for info in infos:
-            normalized_name = info.filename.replace("\\", "/")
-            path = PurePosixPath(normalized_name)
-            if (
-                path.is_absolute()
-                or ".." in path.parts
-                or not info.filename
-                or ":" in normalized_name
-                or "\x00" in normalized_name
-                or info.is_symlink()
-            ):
-                raise UploadRejected("The RAR archive contains an unsafe path or link.")
-            if info.is_dir():
-                continue
-            total_size += info.file_size
-            if total_size > policy.max_archive_expanded_size:
-                raise UploadRejected("The RAR archive expands beyond the configured size limit.")
-            if info.file_size and (not info.compress_size or info.file_size / info.compress_size > policy.max_archive_ratio):
-                raise UploadRejected("The RAR archive exceeds the configured compression ratio.")
-            extension = PurePosixPath(normalized_name.lower()).suffix
-            if extension in AUDIO_EXTENSIONS:
-                audio_infos.append(info)
-        if not audio_infos:
-            raise UploadRejected("The RAR archive contains no supported audio files.")
-        return archive, audio_infos, total_size
-    except Exception:
-        archive.close()
-        raise
+def is_unsafe_member_path(name):
+    normalized = name.replace("\\", "/")
+    path = PurePosixPath(normalized)
+    return (
+        not name
+        or path.is_absolute()
+        or ".." in path.parts
+        or re.match(r"^[A-Za-z]:", normalized) is not None
+        or "\x00" in normalized
+    )
 
 
 def incoming_directory():
