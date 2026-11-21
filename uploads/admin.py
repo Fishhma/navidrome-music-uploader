@@ -12,6 +12,7 @@ class UploadPolicyAdmin(admin.ModelAdmin):
         "max_archive_entries",
         "max_archive_expanded_size",
         "max_archive_ratio",
+        "check_tag_duplicates",
     )
 
     def has_add_permission(self, request):
@@ -31,8 +32,11 @@ class UserUploadLimitAdmin(admin.ModelAdmin):
 class UploadRecordAdmin(admin.ModelAdmin):
     list_display = ("uploaded_at", "username_snapshot", "original_name", "size", "status", "message")
     list_filter = ("status", "uploaded_at")
-    search_fields = ("username_snapshot", "original_name", "sha256")
-    readonly_fields = ("user", "username_snapshot", "original_name", "stored_name", "size", "sha256", "status", "message", "uploaded_at")
+    search_fields = ("username_snapshot", "original_name", "stored_name", "artist", "album", "title", "sha256")
+    readonly_fields = (
+        "user", "username_snapshot", "original_name", "stored_name", "size", "sha256",
+        "artist", "album", "title", "track_key", "status", "message", "uploaded_at",
+    )
     ordering = ("-uploaded_at",)
 
     def has_add_permission(self, request):

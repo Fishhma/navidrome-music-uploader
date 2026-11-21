@@ -121,3 +121,24 @@ MAX_UPLOAD_REQUEST_BYTES = 2 * 1024 * 1024 * 1024
 MAX_UPLOAD_FILE_BYTES = 1024 * 1024 * 1024
 # Store large streamed uploads on the persistent incoming volume, not the small /tmp tmpfs.
 FILE_UPLOAD_TEMP_DIR = str(UPLOAD_INCOMING_DIR)
+
+# Official unrar binary (Debian non-free package "unrar"). Without it the app falls back to rarfile,
+# which uses whatever backend is installed (unar cannot decrypt some encrypted RAR3 archives).
+UNRAR_TOOL = os.environ.get("UNRAR_TOOL", "unrar")
+
+# Optional Navidrome integration: duplicate check against the whole library and automatic rescans.
+NAVIDROME_URL = os.environ.get("NAVIDROME_URL", "").strip()
+NAVIDROME_USERNAME = os.environ.get("NAVIDROME_USERNAME", "").strip()
+NAVIDROME_PASSWORD = os.environ.get("NAVIDROME_PASSWORD", "")
+NAVIDROME_TIMEOUT = float(os.environ.get("NAVIDROME_TIMEOUT", "5"))
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {"plain": {"format": "%(asctime)s %(levelname)s %(name)s: %(message)s"}},
+    "handlers": {"console": {"class": "logging.StreamHandler", "formatter": "plain"}},
+    "loggers": {
+        "uploads": {"handlers": ["console"], "level": os.environ.get("UPLOADER_LOG_LEVEL", "INFO"), "propagate": False},
+    },
+    "root": {"handlers": ["console"], "level": "WARNING"},
+}

@@ -1,0 +1,12 @@
+{% load i18n %}<div class="quota-card" id="quota-card" hidden><span>{% trans "Used in the last 24 hours" %}</span><strong>{{ used|filesizeformat }} <small>/ {{ quota|filesizeformat }}</small></strong><div class="meter"><i style="width:{{ used_percent }}%"></i></div></div>
+<div class="panel history-panel">
+  {% if records %}
+  <div class="history-list">{% for record in records %}
+    <article class="history-row">
+      <span class="file-icon {% if record.status == 'success' %}ok{% elif record.status == 'duplicate' or record.status == 'removed' %}warn{% else %}bad{% endif %}">{% if record.status == 'success' %}♫{% elif record.status == 'duplicate' %}⧉{% elif record.status == 'removed' %}–{% else %}!{% endif %}</span>
+      <div class="record-main"><strong title="{{ record.original_name }}">{{ record.original_name }}</strong><span class="muted" title="{{ record.message }}">{{ record.uploaded_at|date:"d.m.Y H:i" }} · {{ record.size|filesizeformat }}{% if record.stored_name and record.status == 'success' %} · Uploads/{{ record.stored_name }}{% elif record.message %} · {{ record.message }}{% endif %}</span></div>
+      <span class="status {{ record.status }}">{{ record.get_status_display }}</span>
+    </article>
+  {% endfor %}</div>
+  {% else %}<div class="empty-state"><span>♫</span><strong>{% trans "No uploads yet" %}</strong><p class="muted">{% trans "Selected files and their processing status will appear here." %}</p></div>{% endif %}
+</div>

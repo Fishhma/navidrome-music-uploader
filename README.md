@@ -6,10 +6,13 @@ Standalone Django web app for authenticated uploads into an **existing** Navidro
 
 - Separate Django accounts, password hashing, CSRF-protected login/logout, and per-user upload history.
 - Django Admin user enable/disable, global upload policy, optional per-user rolling 24-hour quota, and full upload history.
-- Multi-file selection, drag-and-drop, transfer progress, and result messages.
-- Content-signature checks for MP3, FLAC, WAV, OGG/Opus, M4A/M4B, AAC, AIFF, and WMA. ZIP and RAR archives are supported; password-protected RAR files, including encrypted headers, accept a password in the upload form.
-- Archive traversal, symlink, entry-count, expanded-size, compression-ratio, audio-format, duplicate, file-size, and quota checks. Encrypted ZIP archives remain unsupported.
-- Private SQLite and incoming-upload volumes; validated tracks are atomically renamed into `/music/Uploads/`. The application does not chown or loosen permissions on the shared library.
+- Multi-file selection, drag-and-drop, transfer progress, a server-processing indicator, and a per-file result list (added / partly added / duplicate / failed) that stays on screen.
+- Content-signature checks for MP3, FLAC, WAV, OGG/Opus, M4A/M4B, AAC, AIFF, and WMA. ZIP and RAR archives are supported. Password-protected RAR (RAR4 and RAR5, including encrypted headers) and legacy ZipCrypto ZIP archives accept a password in the upload form; AES-encrypted ZIP is not supported.
+- Duplicate detection: exact content (SHA-256) against the upload history and within the same upload, plus matching artist/album/title tags (can be switched off in the upload policy). Duplicates inside an archive are skipped and the rest of the album is still added. If a previously uploaded file was deleted from the library, it can be uploaded again.
+- Optional Navidrome integration: duplicate check against the whole Navidrome library and an automatic library scan after each successful upload.
+- Archive traversal, symlink, entry-count, expanded-size, compression-ratio, audio-format, file-size, and quota checks.
+- Library layout: `Uploads/<Artist>/<Album>/` from the audio tags (album artist, otherwise track artist; mixed artists become `Various Artists`). Untagged files fall back to an `Artist - Album` folder name, then to `Unknown Artist/<folder>`. Disc folders (CD1, CD2) are kept, and cover/booklet images from the archive are stored next to the tracks. Existing files are never overwritten (`name (2).mp3`).
+- Private SQLite and incoming-upload volumes; validated files are atomically published into `/music/Uploads/`. The application does not chown or loosen permissions on the shared library.
 
 ## Prepare the existing server
 
@@ -45,13 +48,22 @@ If this UID/GID does not already have the required directory write permission, c
 
 For HTTPS behind a trusted TLS-terminating reverse proxy, configure the proxy separately, set `DJANGO_SECURE_COOKIES=1`, set `DJANGO_CSRF_TRUSTED_ORIGINS` to the exact `https://` origin, and configure the correct allowed host. Do not expose this service directly to the public internet. Compose uses persistent named volumes `uploader_data` and `uploader_incoming`; back them up along with `.env`. The media files themselves remain in the existing Navidrome library.
 
-Navidrome sees new tracks under its existing mounted library at its next library scan. Keep its existing scan configuration unchanged; trigger a scan through your normal Navidrome mechanism if required.
+Navidrome sees new tracks under its existing mounted library at its next library scan. To start a scan right after each upload and to check the whole Navidrome library for duplicates, add to `.env`:
+
+```sh
+NAVIDROME_URL=http://192.168.0.110:4533
+NAVIDROME_USERNAME=admin-user
+NAVIDROME_PASSWORD=its-password
+```
+
+The user must be a Navidrome administrator for the scan to start. If Navidrome is unreachable, uploads still work and only these extras are skipped.
 
 ## Limits and operational notes
 
-- Defaults: 100 MiB per upload (and expanded archive), 20 selected files per request, 1 GiB per user in a rolling 24 hours, 100 archive entries, 1 GiB expanded size, and maximum 100:1 expansion ratio. Administrators may change policy values in Django Admin. Per-user quota overrides are managed under **User upload limits**.
-- Files are written under `Uploads/` with a sanitized basename, content hash, and random suffix. Exact-content duplicate detection is global across successful upload history.
-- Archive extraction accepts only regular, supported audio members and does not preserve archive paths. Unsafe paths/links or unreadable/invalid audio reject the archive. Non-audio archive entries are ignored. The Docker image includes `unar` for RAR extraction, and `cryptography` enables encrypted RAR-header parsing; nested archive extraction, transcoding, and audio metadata parsing are not supported.
+- Defaults for new installations: 1 GiB per upload, 100 selected files per request, 1 GiB per user in a rolling 24 hours, 300 archive files, 4 GiB expanded size, and maximum 100:1 expansion ratio. Administrators may change policy values in Django Admin. Per-user quota overrides are managed under **User upload limits**.
+- Archive extraction keeps only regular audio files and images (jpg, png, webp, gif up to 50 MiB). Unsafe paths reject the archive; links and other files are ignored. Invalid audio files inside an archive are skipped and reported.
+- RAR archives are extracted with the official `unrar` (Debian non-free), installed in the Docker image. `unar` is not used: it cannot decrypt some password-protected RAR4 archives (for example albums stored without compression) and fails with a checksum error. Multi-volume RAR archives, nested archives and transcoding are not supported.
+- Gunicorn runs threaded workers with a 15-minute timeout so large uploads over a slow network are not cut off.
 - Validation checks file signatures, not full codec integrity. The Navidrome scanner remains responsible for catalog indexing.
 - A user with Django staff privileges can access Django Admin; grant that role only to trusted administrators. User accounts are created by an admin; public self-registration is not provided.
 - The container has no root privileges, drops Linux capabilities, uses read-only root filesystem, and has memory/PID limits. Restrict access at the host firewall and reverse proxy as appropriate.

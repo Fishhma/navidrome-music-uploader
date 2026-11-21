@@ -1,15 +1,20 @@
 from django.conf import settings
 from django.db import models
 from django.utils import timezone
+from django.utils.translation import gettext_lazy as _
 
 
 class UploadPolicy(models.Model):
-    max_file_size = models.PositiveBigIntegerField(default=100 * 1024 * 1024, help_text="Maximum size of one uploaded file in bytes.")
-    max_files_per_request = models.PositiveSmallIntegerField(default=20)
+    max_file_size = models.PositiveBigIntegerField(default=1024 * 1024 * 1024, help_text="Maximum size of one uploaded file or archive in bytes.")
+    max_files_per_request = models.PositiveSmallIntegerField(default=100, help_text="Maximum number of selected files per request.")
     daily_quota = models.PositiveBigIntegerField(default=1024 * 1024 * 1024, help_text="Default quota per user in a rolling 24-hour period, in bytes.")
-    max_archive_entries = models.PositiveSmallIntegerField(default=100)
-    max_archive_expanded_size = models.PositiveBigIntegerField(default=1024 * 1024 * 1024, help_text="Maximum total uncompressed size per archive, in bytes.")
+    max_archive_entries = models.PositiveSmallIntegerField(default=300, help_text="Maximum number of file entries per archive, including non-media files. Directory entries are not counted.")
+    max_archive_expanded_size = models.PositiveBigIntegerField(default=4 * 1024 * 1024 * 1024, help_text="Maximum total uncompressed size per archive, in bytes.")
     max_archive_ratio = models.PositiveSmallIntegerField(default=100, help_text="Maximum archive member expansion ratio.")
+    check_tag_duplicates = models.BooleanField(
+        default=True,
+        help_text="Also treat a track as a duplicate when its artist, album and title tags match a track that is already in the library.",
+    )
 
     class Meta:
         verbose_name = "upload policy"
@@ -29,21 +34,30 @@ class UserUploadLimit(models.Model):
 
 class UploadRecord(models.Model):
     class Status(models.TextChoices):
-        SUCCESS = "success", "Completed"
-        FAILED = "failed", "Failed"
+        SUCCESS = "success", _("Done")
+        DUPLICATE = "duplicate", _("Duplicate")
+        FAILED = "failed", _("Failed")
+        # A successful upload whose file has since disappeared from the library.
+        REMOVED = "removed", _("Removed")
 
     user = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, on_delete=models.SET_NULL, related_name="upload_records")
     username_snapshot = models.CharField(max_length=150)
     original_name = models.CharField(max_length=500)
+    # Path relative to <library>/Uploads/.
     stored_name = models.CharField(max_length=500, blank=True)
     size = models.PositiveBigIntegerField(default=0)
     sha256 = models.CharField(max_length=64, blank=True, db_index=True)
+    artist = models.CharField(max_length=300, blank=True)
+    album = models.CharField(max_length=300, blank=True)
+    title = models.CharField(max_length=300, blank=True)
+    # Normalized artist/album/title fingerprint used for tag-based duplicate detection.
+    track_key = models.CharField(max_length=64, blank=True, db_index=True)
     status = models.CharField(max_length=10, choices=Status.choices)
     message = models.CharField(max_length=300, blank=True)
     uploaded_at = models.DateTimeField(default=timezone.now, db_index=True)
 
     class Meta:
-        ordering = ["-uploaded_at"]
+        ordering = ["-uploaded_at", "-id"]
         constraints = [
             models.UniqueConstraint(
                 fields=["sha256"],
@@ -54,3 +68,13 @@ class UploadRecord(models.Model):
 
     def __str__(self):
         return f"{self.original_name} ({self.get_status_display()})"
+
+    @property
+    def library_path(self):
+        if not self.stored_name:
+            return None
+        return settings.UPLOAD_LIBRARY_DIR / "Uploads" / self.stored_name
+
+    def file_exists(self):
+        path = self.library_path
+        return bool(path) and path.is_file()

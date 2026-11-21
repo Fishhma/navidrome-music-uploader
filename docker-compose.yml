@@ -18,6 +18,11 @@ services:
       UPLOAD_INCOMING_DIR: /incoming
       UPLOAD_LIBRARY_DIR: /music
       TMPDIR: /incoming
+      # Optional: duplicate check against the whole Navidrome library + automatic rescan after uploads.
+      # The user must be a Navidrome admin for the rescan to work.
+      NAVIDROME_URL: ${NAVIDROME_URL:-}
+      NAVIDROME_USERNAME: ${NAVIDROME_USERNAME:-}
+      NAVIDROME_PASSWORD: ${NAVIDROME_PASSWORD:-}
     ports:
       - "4580:8000"
     volumes:

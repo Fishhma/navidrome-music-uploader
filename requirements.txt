@@ -3,3 +3,4 @@ cryptography>=44,<47
 gunicorn>=23,<24
 rarfile>=4.2,<6
 whitenoise>=6.9,<7
+mutagen>=1.47,<2
